@@ -14,93 +14,99 @@
         <h1>OptiWeight-PC Decision Aid Tool</h1>
         <div class="tab-buttons">
             <button class="tab-btn active" data-tab="introduction">Introduction</button>
-            <button class="tab-btn" data-tab="attributes">Attributes</button>
+            <button class="tab-btn" data-tab="attributes">Attributes & Levels</button>
             <button class="tab-btn" data-tab="inputs">Inputs</button>
             <button class="tab-btn" data-tab="uptake">Predicted Uptake</button>
-            <button class="tab-btn" data-tab="cost-benefit">Cost-Benefit</button>
+            <button class="tab-btn" data-tab="cost-benefit">Cost-Benefit Analysis</button>
             <button class="tab-btn" data-tab="scenarios">Saved Scenarios</button>
         </div>
         
         <div id="introduction" class="tab-content active">
-            <p>Welcome to the OptiWeight-PC Decision Aid Tool. This professional tool assists in evaluating and optimizing weight loss strategies for obese prostate cancer patients (BMI 27-35 kg/m²) undergoing robotic-assisted radical prostatectomy. It integrates patient preferences from Discrete Choice Experiments (DCE) with cost-benefit analyses to predict intervention uptake and economic viability.</p>
-            <p>Use the tabs to navigate: define attributes, input values, view predictions, analyze costs, and manage scenarios. </p>
+            <p>This tool is designed for patients, clinicians, and policymakers to explore weight loss options for obese individuals (BMI 27-35 kg/m²) with prostate cancer before robotic surgery. It uses patient preferences from studies to predict how likely people are to choose a program and calculates if it's worth the cost.</p>
+            <p>Educational Note: Weight loss can reduce surgery risks like incontinence. Semaglutide (e.g., Wegovy) is a weekly injection that helps lose ~5-6 kg/m² BMI over 12 months, but has side effects like nausea. Lifestyle changes (diet/exercise) are safer but slower. Navigate tabs to input details, see predictions, and compare costs/benefits.</p>
         </div>
         
         <div id="attributes" class="tab-content">
-            <h2>Intervention Attributes</h2>
+            <h2>Attributes & Levels</h2>
+            <p>Educational Note: These are key features of weight loss programs based on research. Each has options (levels) to customize.</p>
             <ul>
-                <li><strong>BMI</strong>: Body Mass Index (27-35 kg/m²) <span class="tooltip" title="Patient's baseline BMI; must be within eligibility range for trial inclusion.">ℹ️</span></li>
-                <li><strong>Cost per Month (£)</strong>: Monthly cost of the intervention <span class="tooltip" title="Includes drug acquisition for Semaglutide (~£73-175) or lifestyle program fees.">ℹ️</span></li>
-                <li><strong>Efficacy (BMI Reduction)</strong>: Expected BMI decrease (e.g., 5.54 from STEP-1 trial) <span class="tooltip" title="Based on clinical trials; higher values improve outcomes like 20% reduced incontinence risk.">ℹ️</span></li>
-                <li><strong>Side Effects</strong>: Severity level (None, Mild, Moderate) <span class="tooltip" title="E.g., gastrointestinal issues with GLP-1 agonists.">ℹ️</span></li>
-                <li><strong>Frequency</strong>: Administration frequency (Weekly, Monthly) <span class="tooltip" title="Weekly for Semaglutide injections.">ℹ️</span></li>
-                <li><strong>Method</strong>: Delivery method (Injection, Lifestyle) <span class="tooltip" title="Injection for Semaglutide; Lifestyle for diet/exercise.">ℹ️</span></li>
-                <li><strong>Duration (months)</strong>: Treatment length (6 or 12) <span class="tooltip" title="Perioperative period; 12 months covers pre- and post-surgery.">ℹ️</span></li>
-                <li><strong>Programme Type</strong>: Combined or Lifestyle Alone <span class="tooltip" title="Combined: Semaglutide + diet/exercise; Alone: NHS Weight Loss Plan.">ℹ️</span></li>
+                <li><strong>BMI</strong>: Your starting Body Mass Index. Levels: 27-35 kg/m². (Description: Measures obesity; higher BMI increases surgery risks. Tool ensures eligibility.)</li>
+                <li><strong>Cost per Month (£)</strong>: Monthly expense. Levels: £0-300. (Description: Includes drug or program fees; e.g., Semaglutide ~£73 starter to £175 maintenance per UK NHS/private pricing.)</li>
+                <li><strong>Efficacy (BMI Reduction)</strong>: Expected BMI drop. Levels: 0-10 kg/m². (Description: From trials like STEP-1; e.g., 5.54 kg/m² with Semaglutide, reducing incontinence by ~20%.)</li>
+                <li><strong>Side Effects</strong>: Severity. Levels: None (lifestyle only), Mild (nausea), Moderate (GI issues). (Description: Common with injections; none for diet/exercise.)</li>
+                <li><strong>Frequency</strong>: How often. Levels: Weekly (injections), Monthly (check-ins). (Description: Weekly for Semaglutide; monthly for lifestyle monitoring.)</li>
+                <li><strong>Method</strong>: Delivery. Levels: Injection (Semaglutide), Lifestyle (diet/exercise). (Description: Injection is medical; lifestyle uses apps like NHS Weight Loss Plan.)</li>
+                <li><strong>Duration (months)</strong>: Length. Levels: 6 (short-term), 12 (full peri-op). (Description: Covers pre/post-surgery; longer may improve continence.)</li>
+                <li><strong>Programme Type</strong>: Type. Levels: Combined (drug + lifestyle), Lifestyle Alone. (Description: Combined is more effective but costlier; alone is safer.)</li>
             </ul>
         </div>
         
         <div id="inputs" class="tab-content">
             <form id="inputForm">
-                <label for="bmi">BMI (27-35):</label>
-                <input type="number" id="bmi" min="27" max="35" value="30" required>
+                <label>BMI (27-35):</label>
+                <input type="range" id="bmi" min="27" max="35" value="30" step="0.1" required> <span id="bmiValue">30</span>
                 
-                <label for="cost">Cost per Month (£):</label>
-                <input type="number" id="cost" min="0" value="73" required>
+                <label>Cost per Month (£):</label>
+                <input type="range" id="cost" min="0" max="300" value="175" step="1" required> <span id="costValue">175</span>
                 
-                <label for="efficacy">Efficacy (BMI Reduction):</label>
-                <input type="number" id="efficacy" step="0.1" min="0" value="5.54" required>
+                <label>Efficacy (BMI Reduction):</label>
+                <input type="range" id="efficacy" min="0" max="10" value="5.54" step="0.1" required> <span id="efficacyValue">5.54</span>
                 
-                <label for="side_effects">Side Effects:</label>
-                <select id="side_effects">
-                    <option value="0">None</option>
-                    <option value="1">Mild</option>
-                    <option value="2">Moderate</option>
-                </select>
+                <label>Side Effects:</label>
+                <div class="radio-group">
+                    <input type="radio" id="side_none" name="side_effects" value="0" checked><label for="side_none">None</label>
+                    <input type="radio" id="side_mild" name="side_effects" value="1"><label for="side_mild">Mild</label>
+                    <input type="radio" id="side_mod" name="side_effects" value="2"><label for="side_mod">Moderate</label>
+                </div>
                 
-                <label for="frequency">Frequency:</label>
-                <select id="frequency">
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                </select>
+                <label>Frequency:</label>
+                <div class="radio-group">
+                    <input type="radio" id="freq_weekly" name="frequency" value="weekly" checked><label for="freq_weekly">Weekly</label>
+                    <input type="radio" id="freq_monthly" name="frequency" value="monthly"><label for="freq_monthly">Monthly</label>
+                </div>
                 
-                <label for="method">Method:</label>
-                <select id="method">
-                    <option value="injection">Injection (Semaglutide)</option>
-                    <option value="lifestyle">Lifestyle</option>
-                </select>
+                <label>Method:</label>
+                <div class="radio-group">
+                    <input type="radio" id="method_inj" name="method" value="injection" checked><label for="method_inj">Injection</label>
+                    <input type="radio" id="method_life" name="method" value="lifestyle"><label for="method_life">Lifestyle</label>
+                </div>
                 
-                <label for="duration">Duration (months):</label>
-                <select id="duration">
-                    <option value="6">6</option>
-                    <option value="12">12</option>
-                </select>
+                <label>Duration (months):</label>
+                <div class="radio-group">
+                    <input type="radio" id="dur_6" name="duration" value="6"><label for="dur_6">6</label>
+                    <input type="radio" id="dur_12" name="duration" value="12" checked><label for="dur_12">12</label>
+                </div>
                 
-                <label for="programme">Programme Type:</label>
-                <select id="programme">
-                    <option value="combined">Semaglutide + Lifestyle</option>
-                    <option value="lifestyle">Lifestyle Alone</option>
-                </select>
+                <label>Programme Type:</label>
+                <div class="radio-group">
+                    <input type="radio" id="prog_comb" name="programme" value="combined" checked><label for="prog_comb">Combined</label>
+                    <input type="radio" id="prog_life" name="programme" value="lifestyle"><label for="prog_life">Lifestyle Alone</label>
+                </div>
             </form>
             <button onclick="calculate()">Calculate</button>
+            <button onclick="simulate()">Simulate Uncertainty</button>
             <div id="recommendations" class="recommendations"></div>
         </div>
         
         <div id="uptake" class="tab-content">
             <h2>Predicted Uptake</h2>
+            <p>Note: Shows % of patients likely to choose this based on preferences from studies.</p>
             <div id="uptakeResults"></div>
             <canvas id="uptakeChart" width="400" height="200"></canvas>
         </div>
         
         <div id="cost-benefit" class="tab-content">
             <h2>Cost-Benefit Analysis</h2>
+            <p>Note: Compares costs (drug, monitoring) to benefits (savings from fewer complications, QALYs). Uptake scales benefits: e.g., 70% uptake means 70% of max benefit realized.</p>
             <div id="cbaResults"></div>
             <canvas id="cbaChart" width="400" height="200"></canvas>
+            <canvas id="simChart" width="400" height="200"></canvas>
         </div>
         
         <div id="scenarios" class="tab-content">
             <h2>Saved Scenarios</h2>
             <ul id="scenarioList"></ul>
+            <button onclick="saveScenario()">Save Current Scenario</button>
             <button onclick="generatePDF()">Generate PDF Report</button>
         </div>
     </div>
