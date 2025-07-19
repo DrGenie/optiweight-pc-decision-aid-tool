@@ -1,15 +1,15 @@
-/* Global variables */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     background-color: #e9ecef;
     color: #333;
+    font-size: 16px;
 }
 
 .container {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 30px;
+    max-width: 90%;
+    margin: 20px auto;
+    padding: 20px;
     background: #ffffff;
     border-radius: 12px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
@@ -18,19 +18,21 @@ body {
 h1 {
     text-align: center;
     color: #007bff;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    font-size: 1.5em;
 }
 
 .tab-buttons {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     border-bottom: 2px solid #dee2e6;
 }
 
 .tab-btn {
-    padding: 12px 20px;
-    margin: 0 5px;
+    padding: 10px 15px;
+    margin: 5px;
     background: #f8f9fa;
     border: none;
     border-radius: 8px 8px 0 0;
@@ -38,6 +40,7 @@ h1 {
     font-weight: 600;
     color: #495057;
     transition: background 0.3s, color 0.3s;
+    font-size: 0.9em;
 }
 
 .tab-btn:hover {
@@ -51,7 +54,7 @@ h1 {
 
 .tab-content {
     display: none;
-    padding: 20px;
+    padding: 15px;
     border-radius: 8px;
     background: #f8f9fa;
 }
@@ -62,30 +65,31 @@ h1 {
 
 form {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    grid-template-columns: 1fr;
+    gap: 10px;
 }
 
 label {
     font-weight: 600;
     color: #495057;
+    font-size: 1em;
 }
 
-input, select {
-    padding: 10px;
-    border: 1px solid #ced4da;
-    border-radius: 6px;
-    background: #ffffff;
-    transition: border 0.3s;
+input[type="range"] {
+    width: 100%;
 }
 
-input:focus, select:focus {
-    border-color: #007bff;
-    outline: none;
+.radio-group {
+    display: flex;
+    gap: 10px;
+}
+
+.radio-group input {
+    margin-right: 5px;
 }
 
 button {
-    padding: 12px 20px;
+    padding: 10px;
     background: #28a745;
     color: #ffffff;
     border: none;
@@ -93,7 +97,8 @@ button {
     cursor: pointer;
     font-weight: 600;
     transition: background 0.3s;
-    margin-top: 15px;
+    margin-top: 10px;
+    font-size: 1em;
 }
 
 button:hover {
@@ -101,22 +106,13 @@ button:hover {
 }
 
 .recommendations {
-    margin-top: 20px;
-    padding: 15px;
+    margin-top: 15px;
+    padding: 10px;
     background: #d4edda;
     border: 1px solid #c3e6cb;
     border-radius: 6px;
     color: #155724;
-}
-
-.tooltip {
-    cursor: help;
-    background: #ffc107;
-    color: #212529;
-    border-radius: 50%;
-    padding: 0 6px;
-    margin-left: 5px;
-    font-size: 0.8em;
+    font-size: 0.9em;
 }
 
 ul {
@@ -125,22 +121,24 @@ ul {
 }
 
 li {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     padding: 10px;
     background: #ffffff;
     border: 1px solid #dee2e6;
     border-radius: 6px;
+    font-size: 0.9em;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 15px;
+    margin-top: 10px;
+    font-size: 0.9em;
 }
 
 th, td {
     border: 1px solid #dee2e6;
-    padding: 12px;
+    padding: 8px;
     text-align: left;
 }
 
@@ -150,8 +148,39 @@ th {
 }
 
 canvas {
-    margin-top: 20px;
+    margin-top: 15px;
     background: #ffffff;
     border: 1px solid #dee2e6;
     border-radius: 6px;
+    max-width: 100%;
+    height: auto;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    h1 {
+        font-size: 1.2em;
+    }
+    .tab-btn {
+        padding: 8px 12px;
+        font-size: 0.8em;
+    }
+    form {
+        gap: 8px;
+    }
+    button {
+        padding: 8px;
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 480px) {
+    .tab-buttons {
+        flex-direction: column;
+    }
+    .radio-group {
+        flex-direction: column;
+    }
 }
