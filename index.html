@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OptiWeight-PC Decision Aid Tool Prototype</title>
+    <title>OptiWeight-PC Decision Aid Tool</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.1/jspdf.umd.min.js"></script>
@@ -11,72 +11,97 @@
 </head>
 <body>
     <div class="container">
-        <h1>OptiWeight-PC Decision Aid Tool Prototype</h1>
-        <form id="inputForm">
-            <label for="bmi">BMI (27-35):</label>
-            <input type="number" id="bmi" min="27" max="35" value="30" required>
-            
-            <label for="cost">Cost per Month (£):</label>
-            <input type="number" id="cost" min="0" value="73" required>
-            
-            <label for="efficacy">Efficacy (BMI Reduction):</label>
-            <input type="number" id="efficacy" step="0.1" min="0" value="5.54" required>
-            
-            <label for="side_effects">Side Effects:</label>
-            <select id="side_effects">
-                <option value="0">None</option>
-                <option value="1">Mild</option>
-                <option value="2">Moderate</option>
-            </select>
-            
-            <label for="frequency">Frequency:</label>
-            <select id="frequency">
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-            </select>
-            
-            <label for="method">Method:</label>
-            <select id="method">
-                <option value="injection">Injection (Semaglutide)</option>
-                <option value="lifestyle">Lifestyle</option>
-            </select>
-            
-            <label for="duration">Duration (months):</label>
-            <select id="duration">
-                <option value="6">6</option>
-                <option value="12">12</option>
-            </select>
-            
-            <label for="programme">Programme Type:</label>
-            <select id="programme">
-                <option value="combined">Semaglutide + Lifestyle</option>
-                <option value="lifestyle">Lifestyle Alone</option>
-            </select>
-        </form>
-        <button onclick="calculate()">Calculate</button>
-        <button onclick="saveScenario()">Save Scenario</button>
-        <button onclick="generatePDF()">Generate PDF Report</button>
-        
-        <div id="results">
-            <h2>Results</h2>
-            <table id="resultTable">
-                <thead>
-                    <tr>
-                        <th>Metric</th>
-                        <th>Value</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+        <h1>OptiWeight-PC Decision Aid Tool</h1>
+        <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="introduction">Introduction</button>
+            <button class="tab-btn" data-tab="attributes">Attributes</button>
+            <button class="tab-btn" data-tab="inputs">Inputs</button>
+            <button class="tab-btn" data-tab="uptake">Predicted Uptake</button>
+            <button class="tab-btn" data-tab="cost-benefit">Cost-Benefit</button>
+            <button class="tab-btn" data-tab="scenarios">Saved Scenarios</button>
         </div>
         
-        <div id="chartContainer">
+        <div id="introduction" class="tab-content active">
+            <p>Welcome to the OptiWeight-PC Decision Aid Tool. This professional tool assists in evaluating and optimizing weight loss strategies for obese prostate cancer patients (BMI 27-35 kg/m²) undergoing robotic-assisted radical prostatectomy. It integrates patient preferences from Discrete Choice Experiments (DCE) with cost-benefit analyses to predict intervention uptake and economic viability.</p>
+            <p>Use the tabs to navigate: define attributes, input values, view predictions, analyze costs, and manage scenarios. Recommendations will update dynamically based on your inputs.</p>
+        </div>
+        
+        <div id="attributes" class="tab-content">
+            <h2>Intervention Attributes</h2>
+            <ul>
+                <li><strong>BMI</strong>: Body Mass Index (27-35 kg/m²) <span class="tooltip" title="Patient's baseline BMI; must be within eligibility range for trial inclusion.">ℹ️</span></li>
+                <li><strong>Cost per Month (£)</strong>: Monthly cost of the intervention <span class="tooltip" title="Includes drug acquisition for Semaglutide (~£73-175) or lifestyle program fees.">ℹ️</span></li>
+                <li><strong>Efficacy (BMI Reduction)</strong>: Expected BMI decrease (e.g., 5.54 from STEP-1 trial) <span class="tooltip" title="Based on clinical trials; higher values improve outcomes like 20% reduced incontinence risk.">ℹ️</span></li>
+                <li><strong>Side Effects</strong>: Severity level (None, Mild, Moderate) <span class="tooltip" title="E.g., gastrointestinal issues with GLP-1 agonists.">ℹ️</span></li>
+                <li><strong>Frequency</strong>: Administration frequency (Weekly, Monthly) <span class="tooltip" title="Weekly for Semaglutide injections.">ℹ️</span></li>
+                <li><strong>Method</strong>: Delivery method (Injection, Lifestyle) <span class="tooltip" title="Injection for Semaglutide; Lifestyle for diet/exercise.">ℹ️</span></li>
+                <li><strong>Duration (months)</strong>: Treatment length (6 or 12) <span class="tooltip" title="Perioperative period; 12 months covers pre- and post-surgery.">ℹ️</span></li>
+                <li><strong>Programme Type</strong>: Combined or Lifestyle Alone <span class="tooltip" title="Combined: Semaglutide + diet/exercise; Alone: NHS Weight Loss Plan.">ℹ️</span></li>
+            </ul>
+        </div>
+        
+        <div id="inputs" class="tab-content">
+            <form id="inputForm">
+                <label for="bmi">BMI (27-35):</label>
+                <input type="number" id="bmi" min="27" max="35" value="30" required>
+                
+                <label for="cost">Cost per Month (£):</label>
+                <input type="number" id="cost" min="0" value="73" required>
+                
+                <label for="efficacy">Efficacy (BMI Reduction):</label>
+                <input type="number" id="efficacy" step="0.1" min="0" value="5.54" required>
+                
+                <label for="side_effects">Side Effects:</label>
+                <select id="side_effects">
+                    <option value="0">None</option>
+                    <option value="1">Mild</option>
+                    <option value="2">Moderate</option>
+                </select>
+                
+                <label for="frequency">Frequency:</label>
+                <select id="frequency">
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                </select>
+                
+                <label for="method">Method:</label>
+                <select id="method">
+                    <option value="injection">Injection (Semaglutide)</option>
+                    <option value="lifestyle">Lifestyle</option>
+                </select>
+                
+                <label for="duration">Duration (months):</label>
+                <select id="duration">
+                    <option value="6">6</option>
+                    <option value="12">12</option>
+                </select>
+                
+                <label for="programme">Programme Type:</label>
+                <select id="programme">
+                    <option value="combined">Semaglutide + Lifestyle</option>
+                    <option value="lifestyle">Lifestyle Alone</option>
+                </select>
+            </form>
+            <button onclick="calculate()">Calculate</button>
+            <div id="recommendations" class="recommendations"></div>
+        </div>
+        
+        <div id="uptake" class="tab-content">
+            <h2>Predicted Uptake</h2>
+            <div id="uptakeResults"></div>
             <canvas id="uptakeChart" width="400" height="200"></canvas>
         </div>
         
-        <div id="savedScenarios">
+        <div id="cost-benefit" class="tab-content">
+            <h2>Cost-Benefit Analysis</h2>
+            <div id="cbaResults"></div>
+            <canvas id="cbaChart" width="400" height="200"></canvas>
+        </div>
+        
+        <div id="scenarios" class="tab-content">
             <h2>Saved Scenarios</h2>
             <ul id="scenarioList"></ul>
+            <button onclick="generatePDF()">Generate PDF Report</button>
         </div>
     </div>
 </body>
