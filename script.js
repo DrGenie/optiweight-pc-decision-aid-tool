@@ -1,283 +1,159 @@
-let uptakeChart, cbaChart, simChart;
-let scenarios = [];
-let currentResults = {};
-let simData = [];
+let upChart, cbChart;
+let current = null;
 
-document.getElementById('bmi').addEventListener('input', (e) => document.getElementById('bmiValue').textContent = e.target.value);
-document.getElementById('cost').addEventListener('input', (e) => document.getElementById('costValue').textContent = e.target.value);
-document.getElementById('efficacy').addEventListener('input', (e) => document.getElementById('efficacyValue').textContent = e.target.value);
-
+// Tab navigation
 document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-        document.getElementById(btn.dataset.tab).classList.add('active');
-    });
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
 });
 
-document.getElementById('calculateBtn').addEventListener('click', calculate);
-document.getElementById('simulateBtn').addEventListener('click', simulate);
-document.getElementById('saveScenarioBtn').addEventListener('click', saveScenario);
-document.getElementById('generatePDFBtn').addEventListener('click', generatePDF);
-document.querySelector('.close-popup').addEventListener('click', () => document.getElementById('resultsPopup').classList.remove('active'));
+// Range value display
+[['bmi','bmiVal'], ['cost','costVal'], ['eff','effVal']].forEach(([id, out]) => {
+  const inp = document.getElementById(id), disp = document.getElementById(out);
+  inp.addEventListener('input', e => disp.textContent = e.target.value);
+});
 
-function getRadioValue(name) {
-    const selected = document.querySelector(`input[name="${name}"]:checked`);
-    return selected ? selected.value : null;
+// Helper to read radio
+function getRadio(name) {
+  return document.querySelector(`input[name="${name}"]:checked`).value;
 }
 
-function calculate() {
-    const bmi = parseFloat(document.getElementById('bmi').value);
-    if (bmi < 27 || bmi > 35) {
-        alert('BMI must be between 27 and 35 kg/m².');
-        return;
-    }
+// Calculate action
+document.getElementById('calcBtn').addEventListener('click', e => {
+  e.preventDefault();
+  // Gather
+  const bmi = +document.getElementById('bmi').value;
+  const cost = +document.getElementById('cost').value;
+  const eff = +document.getElementById('eff').value;
+  const side = +getRadio('side');
+  const freq = getRadio('freq');
+  const method = getRadio('method');
+  const dur = +getRadio('dur');
+  const prog = getRadio('prog');
 
-    const cost = parseFloat(document.getElementById('cost').value);
-    const efficacy = parseFloat(document.getElementById('efficacy').value);
-    const side_effects = parseFloat(getRadioValue('side_effects') || 0);
-    const frequency = getRadioValue('frequency') || 'weekly';
-    const method = getRadioValue('method') || 'injection';
-    const duration = parseInt(getRadioValue('duration') || 12);
-    const programme = getRadioValue('programme') || 'combined';
+  // Validation warnings
+  if (prog === 'lifestyle' && method === 'injection') {
+    alert('Inconsistent: Lifestyle-only cannot use injections.');
+    return;
+  }
+  if (prog === 'lifestyle' && eff > 6) {
+    alert('High efficacy (>6) unlikely for lifestyle alone.');
+  }
 
-    // Realistic betas based on DCE literature
-    const beta_cost = -0.015; // Cost sensitivity
-    const beta_efficacy = 0.6; // Preference for BMI reduction
-    const beta_side = -0.25; // Dislike for side effects
-    const beta_freq = frequency === 'weekly' ? -0.15 : 0;
-    const beta_method = method === 'injection' ? -0.1 : 0.1;
-    const beta_duration = duration === 12 ? -0.05 : 0;
-    const beta_programme = programme === 'combined' ? 0.3 : 0;
+  // Utility betas
+  const b = {
+    cost: -0.015,
+    eff: 0.6,
+    side: -0.25,
+    freq: freq==='weekly' ? -0.15 : 0,
+    method: method==='injection' ? -0.1 : 0.1,
+    dur: dur===12 ? -0.05 : 0,
+    prog: prog==='combined' ? 0.3 : 0
+  };
+  const U = b.cost*cost + b.eff*eff + b.side*side + b.freq + b.method + b.dur + b.prog;
+  const P = Math.exp(U)/(1+Math.exp(U));
 
-    const U_i = (beta_cost * cost) + (beta_efficacy * efficacy) + (beta_side * side_effects) +
-                beta_freq + beta_method + beta_duration + beta_programme;
-    const U_optout = 0;
-    const P_i = Math.exp(U_i) / (Math.exp(U_i) + Math.exp(U_optout));
+  // Cost–benefit
+  const drug = method==='injection'?175:0;
+  const monitor = prog==='combined'?50:30;
+  const admin = 20;
+  const train = prog==='lifestyle'?15:0;
+  const totCost = (drug+monitor+admin+train)*dur;
+  const saving = eff*92;
+  const qaly = eff*0.05;
+  const qv = qaly*20000;
+  const net = saving + qv - totCost;
+  const expNet = P*net;
+  const icer = qaly>0? (totCost/qaly) : null;
 
-    // Detailed CBA (NHS/BNF, Bolenz et al.)
-    const drug_cost_month = method === 'injection' ? 175 : 0; // Semaglutide £175
-    const monitoring_cost_month = programme === 'combined' ? 50 : 30; // Clinic visits
-    const admin_cost_month = 20; // Admin/staff
-    const training_cost_month = programme === 'lifestyle' ? 15 : 0; // App training
-    const total_cost_month = drug_cost_month + monitoring_cost_month + admin_cost_month + training_cost_month;
-    const total_cost = total_cost_month * duration;
-    const savings_per_patient = efficacy * 92; // £460 / 5 kg/m² (Bolenz et al.)
-    const qaly_gain_per_patient = efficacy * 0.05; // 0.05 QALY per 1 kg/m²
-    const qaly_value = qaly_gain_per_patient * 20000; // NHS £20k/QALY
-    const net_benefit_per_patient = savings_per_patient + qaly_value - total_cost;
-    const expected_net_benefit = (P_i * net_benefit_per_patient).toFixed(2);
+  current = { P, totCost, saving, qv, net, expNet, icer };
 
-    const icer = qaly_gain_per_patient > 0 ? (total_cost / qaly_gain_per_patient).toFixed(2) : 'N/A';
+  // Popup
+  const body = document.getElementById('popupBody');
+  body.innerHTML = `
+    <h3>Results</h3>
+    <p>Uptake: ${(P*100).toFixed(1)}%<br>
+    Total Cost: £${totCost.toFixed(2)}<br>
+    Net Benefit: £${net.toFixed(2)}<br>
+    Exp. Net: £${expNet.toFixed(2)}<br>
+    ICER: £${icer?icer.toFixed(2):'N/A'}/QALY</p>
+  `;
+  document.getElementById('resultsPopup').classList.add('active');
 
-    currentResults = {
-        inputs: { bmi, cost, efficacy, side_effects, frequency, method, duration, programme },
-        outputs: {
-            uptake_prob: (P_i * 100).toFixed(2),
-            total_cost: total_cost.toFixed(2),
-            drug_cost: (drug_cost_month * duration).toFixed(2),
-            monitoring_cost: (monitoring_cost_month * duration).toFixed(2),
-            admin_cost: (admin_cost_month * duration).toFixed(2),
-            training_cost: (training_cost_month * duration).toFixed(2),
-            savings: savings_per_patient.toFixed(2),
-            qaly_gain: qaly_gain_per_patient.toFixed(2),
-            qaly_value: qaly_value.toFixed(2),
-            net_benefit: net_benefit_per_patient.toFixed(2),
-            expected_net_benefit,
-            icer
-        }
-    };
+  // Uptake chart
+  document.getElementById('upText').innerHTML = `<p>Uptake Probability: <strong>${(P*100).toFixed(1)}%</strong></p>`;
+  const ctx1 = document.getElementById('upChart').getContext('2d');
+  if (upChart) upChart.destroy();
+  upChart = new Chart(ctx1, {
+    type: 'doughnut',
+    data: {
+      labels: ['Uptake','Opt-out'],
+      datasets: [{ data: [P*100,100-P*100], backgroundColor: ['var(--secondary-color)','var(--accent-color)'] }]
+    },
+    options: { responsive: true }
+  });
 
-    // Detailed recommendations
-    let recs = '<h3>Recommendations</h3><ul>';
-    if (P_i < 0.6) recs += '<li><strong>Low Uptake (<60%):</strong> Patients may avoid this program. Reduce costs to ~£100/month or select milder side effects to boost acceptance.</li>';
-    if (efficacy < 4) recs += '<li><strong>Low Efficacy:</strong> Target >5 kg/m² BMI reduction (e.g., combined program) to reduce incontinence risk by 20% and save ~£460 in complications.</li>';
-    if (icer !== 'N/A' && parseFloat(icer) > 20000) recs += '<li><strong>High ICER:</strong> Above NHS £20k/QALY threshold. Try 6-month duration or lifestyle-only for better value.</li>';
-    if (programme === 'combined') recs += '<li><strong>Combined Program:</strong> High efficacy (38% lower incontinence odds per Look AHEAD trial) but monitor nausea. Consider patient tolerance.</li>';
-    if (method === 'lifestyle') recs += '<li><strong>Lifestyle Only:</strong> Safer and cheaper but slower. Use NHS Weight Loss App to improve adherence.</li>';
-    recs += `<li><strong>Summary:</strong> ${icer !== 'N/A' && parseFloat(icer) < 20000 ? 'Cost-effective; ideal for NHS adoption.' : 'Adjust cost or efficacy for better outcomes.'}</li></ul>`;
-    
-    // Popup Results
-    let popupHtml = `
-        <h4>Inputs</h4>
-        <p>BMI: ${bmi} kg/m², Cost: £${cost}/month, Efficacy: ${efficacy} kg/m², Side Effects: ${['None', 'Mild', 'Moderate'][side_effects]},
-        Frequency: ${frequency}, Method: ${method}, Duration: ${duration} months, Programme: ${programme}</p>
-        <h4>Results</h4>
-        <p>Uptake: ${currentResults.outputs.uptake_prob}%</p>
-        <p>Total Cost: £${currentResults.outputs.total_cost}</p>
-        <p>Net Benefit: £${currentResults.outputs.net_benefit}</p>
-        <p>Expected Net Benefit (with uptake): £${currentResults.outputs.expected_net_benefit}</p>
-        <p>ICER: £${currentResults.outputs.icer}/QALY</p>`;
-    document.getElementById('popupResults').innerHTML = popupHtml;
-    document.getElementById('recommendations').innerHTML = recs;
-    document.getElementById('resultsPopup').classList.add('active');
+  // CBA table + chart
+  document.getElementById('cbTable').innerHTML = `
+    <table>
+      <tr><th>Metric</th><th>£</th></tr>
+      <tr><td>Total Cost</td><td>${totCost.toFixed(2)}</td></tr>
+      <tr><td>Savings</td><td>${saving.toFixed(2)}</td></tr>
+      <tr><td>QALY Value</td><td>${qv.toFixed(2)}</td></tr>
+      <tr><td>Net Benefit</td><td>${net.toFixed(2)}</td></tr>
+    </table>
+  `;
+  const ctx2 = document.getElementById('cbChart').getContext('2d');
+  if (cbChart) cbChart.destroy();
+  cbChart = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: ['Cost','Savings','QALY','Net'],
+      datasets: [{
+        label: '£',
+        data: [totCost,saving,qv,net],
+        backgroundColor: ['#ff6384','#36a2eb','#ffce56','#4bc0c0']
+      }]
+    },
+    options: { responsive: true, scales: { y:{ beginAtZero:true } } }
+  });
+});
 
-    // Uptake Tab
-    document.getElementById('uptakeResults').innerHTML = `<p><strong>Uptake Probability:</strong> ${currentResults.outputs.uptake_prob}% (Likelihood patients choose this program.)</p>`;
-    const uptakeCtx = document.getElementById('uptakeChart').getContext('2d');
-    if (uptakeChart) uptakeChart.destroy();
-    uptakeChart = new Chart(uptakeCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Uptake', 'Opt-Out'],
-            datasets: [{ data: [P_i * 100, 100 - P_i * 100], backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue('--secondary-color'), getComputedStyle(document.documentElement).getPropertyValue('--accent-color')], borderColor: '#ffffff', borderWidth: 1 }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { position: 'top', labels: { font: { size: 12 } } }, title: { display: true, text: 'Uptake Probability (%)' } }
-        }
-    });
+// Close popup
+document.querySelector('.close-popup').onclick = () =>
+  document.getElementById('resultsPopup').classList.remove('active');
 
-    // Cost-Benefit Tab
-    let cbaHtml = `
-        <table>
-            <tr><th>Component</th><th>Value (£)</th><th>Calculation</th></tr>
-            <tr><td>Drug Cost</td><td>${currentResults.outputs.drug_cost}</td><td>Semaglutide (£175/month for injections, £0 for lifestyle) × ${duration} months.</td></tr>
-            <tr><td>Monitoring Cost</td><td>${currentResults.outputs.monitoring_cost}</td><td>Clinic visits (£50/month for combined, £30 for lifestyle) × ${duration} months.</td></tr>
-            <tr><td>Admin Cost</td><td>${currentResults.outputs.admin_cost}</td><td>Staff/program admin (£20/month) × ${duration} months.</td></tr>
-            <tr><td>Training Cost</td><td>${currentResults.outputs.training_cost}</td><td>Lifestyle app training (£15/month for lifestyle, £0 for combined) × ${duration} months.</td></tr>
-            <tr><td>Total Cost</td><td>${currentResults.outputs.total_cost}</td><td>Sum of drug, monitoring, admin, training costs.</td></tr>
-            <tr><td>Savings</td><td>${currentResults.outputs.savings}</td><td>£92 per 1 kg/m² BMI reduction × ${efficacy} kg/m² (from reduced complications, Bolenz et al.).</td></tr>
-            <tr><td>QALY Gain</td><td>${currentResults.outputs.qaly_gain}</td><td>0.05 QALY per 1 kg/m² × ${efficacy} kg/m².</td></tr>
-            <tr><td>QALY Value</td><td>${currentResults.outputs.qaly_value}</td><td>QALY Gain × £20,000 (NHS standard).</td></tr>
-            <tr><td>Net Benefit per Patient</td><td>${currentResults.outputs.net_benefit}</td><td>Savings + QALY Value - Total Cost.</td></tr>
-            <tr><td>Expected Net Benefit</td><td>${currentResults.outputs.expected_net_benefit}</td><td>Net Benefit × ${currentResults.outputs.uptake_prob}% uptake.</td></tr>
-            <tr><td>ICER (/QALY)</td><td>${currentResults.outputs.icer}</td><td>Total Cost ÷ QALY Gain; <£20,000 is cost-effective.</td></tr>
-        </table>`;
-    document.getElementById('cbaResults').innerHTML = cbaHtml;
-    const cbaCtx = document.getElementById('cbaChart').getContext('2d');
-    if (cbaChart) cbaChart.destroy();
-    cbaChart = new Chart(cbaCtx, {
-        type: 'bar',
-        data: {
-            labels: ['Total Cost', 'Savings', 'QALY Value', 'Net Benefit', 'Expected Benefit'],
-            datasets: [{
-                label: 'Cost-Benefit Metrics (£)',
-                data: [total_cost, savings_per_patient, qaly_value, net_benefit_per_patient, P_i * net_benefit_per_patient],
-                backgroundColor: ['#ff6b6b', getComputedStyle(document.documentElement).getPropertyValue('--secondary-color'), '#17a2b8', getComputedStyle(document.documentElement).getPropertyValue('--primary-color'), getComputedStyle(document.documentElement).getPropertyValue('--accent-color')],
-                borderColor: '#ffffff',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: { y: { beginAtZero: true, title: { display: true, text: 'Value (£)' } } },
-            plugins: { legend: { labels: { font: { size: 12 } } }, title: { display: true, text: 'Cost-Benefit Breakdown' } }
-        }
-    });
-
-    // Clear simulation chart
-    if (simChart) simChart.destroy();
-    simData = [];
-    document.getElementById('simChart').getContext('2d').clearRect(0, 0, 400, 200);
-}
-
-function simulate() {
-    if (!Object.keys(currentResults).length) {
-        alert('Calculate results first.');
-        return;
-    }
-    simData = [];
-    for (let i = 0; i < 100; i++) {
-        const simEfficacy = parseFloat(currentResults.outputs.qaly_gain) * (1 + (Math.random() - 0.5) * 0.2); // ±20% QALY
-        const simCost = parseFloat(currentResults.outputs.total_cost) * (1 + (Math.random() - 0.5) * 0.15); // ±15% cost
-        simData.push(simEfficacy > 0 ? simCost / simEfficacy : 100000);
-    }
-    const simCtx = document.getElementById('simChart').getContext('2d');
-    if (simChart) simChart.destroy();
-    simChart = new Chart(simCtx, {
-        type: 'histogram',
-        data: {
-            datasets: [{
-                label: 'Simulated ICERs (£/QALY)',
-                data: simData,
-                backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
-                borderColor: '#ffffff',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                x: { type: 'linear', title: { display: true, text: 'ICER (£/QALY)' } },
-                y: { beginAtZero: true, title: { display: true, text: 'Frequency' } }
-            },
-            plugins: { legend: { labels: { font: { size: 12 } } }, title: { display: true, text: 'ICER Uncertainty Simulation' } }
-        }
-    });
-}
-
-function saveScenario() {
-    if (!Object.keys(currentResults).length) {
-        alert('Calculate results first.');
-        return;
-    }
-    scenarios.push(currentResults);
-    updateScenarioList();
-}
-
-function updateScenarioList() {
-    const list = document.getElementById('scenarioList');
-    list.innerHTML = '';
-    scenarios.forEach((sc, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `Scenario ${index + 1}: BMI=${sc.inputs.bmi}, Uptake=${sc.outputs.uptake_prob}%, Expected Net Benefit=£${sc.outputs.expected_net_benefit}, ICER=£${sc.outputs.icer}/QALY`;
-        list.appendChild(li);
-    });
-}
-
-function generatePDF() {
-    if (!Object.keys(currentResults).length) {
-        alert('Calculate results first.');
-        return;
-    }
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.setFontSize(14);
-    doc.text('OptiWeight-PC Decision Aid Report', 10, 10);
-    doc.setFontSize(10);
-    
-    // Inputs
-    doc.text('Inputs', 10, 20);
-    let y = 30;
-    const inputs = currentResults.inputs;
-    doc.text(`BMI: ${inputs.bmi} kg/m²`, 10, y); y += 8;
-    doc.text(`Cost: £${inputs.cost}/month`, 10, y); y += 8;
-    doc.text(`Efficacy: ${inputs.efficacy} kg/m²`, 10, y); y += 8;
-    doc.text(`Side Effects: ${['None', 'Mild', 'Moderate'][inputs.side_effects]}`, 10, y); y += 8;
-    doc.text(`Frequency: ${inputs.frequency}`, 10, y); y += 8;
-    doc.text(`Method: ${inputs.method}`, 10, y); y += 8;
-    doc.text(`Duration: ${inputs.duration} months`, 10, y); y += 8;
-    doc.text(`Programme: ${inputs.programme}`, 10, y); y += 8;
-
-    // Results
-    doc.text('Results', 10, y); y += 10;
-    Object.entries(currentResults.outputs).forEach(([key, val]) => {
-        doc.text(`${key.replace(/_/g, ' ').toUpperCase()}: ${val}`, 10, y);
-        y += 8;
-    });
-
-    // Recommendations
-    doc.text('Recommendations', 10, y); y += 10;
-    const recsText = document.getElementById('recommendations').innerText.replace(/\n/g, ' ').substring(0, 500);
-    doc.text(recsText, 10, y, { maxWidth: 180 }); y += 30;
-
-    // Charts
-    if (uptakeChart) {
-        doc.text('Uptake Probability', 10, y);
-        doc.addImage(document.getElementById('uptakeChart').toDataURL('image/png'), 'PNG', 10, y + 5, 90, 45);
-        y += 55;
-    }
-    if (cbaChart) {
-        doc.text('Cost-Benefit Breakdown', 10, y);
-        doc.addImage(document.getElementById('cbaChart').toDataURL('image/png'), 'PNG', 10, y + 5, 90, 45);
-        y += 55;
-    }
-    if (simChart) {
-        doc.text('ICER Uncertainty Simulation', 10, y);
-        doc.addImage(document.getElementById('simChart').toDataURL('image/png'), 'PNG', 10, y + 5, 90, 45);
-    }
-
-    doc.save('optiweight_report.pdf');
-}
+// Simulation
+document.getElementById('simBtn').addEventListener('click', e => {
+  e.preventDefault();
+  if (!current) { alert('Please calculate first.'); return; }
+  const sims = [];
+  for (let i=0; i<100; i++) {
+    const c = current.totCost*(1+(Math.random()-0.5)*0.3);
+    const q = current.qv*(1+(Math.random()-0.5)*0.3);
+    sims.push(q>0? c/q : 0);
+  }
+  // simple histogram
+  const min = Math.min(...sims), max = Math.max(...sims);
+  const bins = 10, width = (max-min)/bins;
+  const counts = Array(bins).fill(0), labels = [];
+  sims.forEach(v => {
+    const idx = Math.min(Math.floor((v-min)/width), bins-1);
+    counts[idx]++;
+  });
+  for (let i=0; i<bins; i++) {
+    labels.push(`${(min+i*width).toFixed(0)}–${(min+(i+1)*width).toFixed(0)}`);
+  }
+  // append chart
+  const ctx = document.createElement('canvas');
+  document.getElementById('cbaTab').appendChild(ctx);
+  new Chart(ctx.getContext('2d'), {
+    type: 'bar',
+    data: { labels, datasets: [{ label:'ICER', data:counts, backgroundColor:'var(--primary-color)' }] },
+    options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
+  });
+});
