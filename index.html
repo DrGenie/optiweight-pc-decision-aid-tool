@@ -12,105 +12,101 @@
 </head>
 <body>
   <header>
-    <h1>OptiWeight-PC <span>Decision Aid Tool</span></h1>
+    <h1>OptiWeight-PC Decision Aid Tool</h1>
   </header>
-
   <nav class="tab-nav">
     <button class="tab-btn active" data-tab="intro">Introduction</button>
-    <button class="tab-btn" data-tab="attr">Attributes &amp; Levels</button>
+    <button class="tab-btn" data-tab="attr">Attributes & Levels</button>
     <button class="tab-btn" data-tab="inputs">Inputs</button>
     <button class="tab-btn" data-tab="uptake">Predicted Uptake</button>
     <button class="tab-btn" data-tab="cba">Cost-Benefit</button>
     <button class="tab-btn" data-tab="scenarios">Saved Scenarios</button>
   </nav>
-
   <main>
     <!-- INTRODUCTION -->
     <section id="intro" class="tab-content active">
       <div class="card">
-        <h2>Welcome to the OptiWeight-PC Decision Aid</h2>
+        <h2>Purpose and Methodology</h2>
         <p>
-          This interactive tool empowers <strong>patients, clinicians, and policy-makers</strong> to explore the trade-offs, benefits, and expected outcomes of weight loss programmes for men with obesity (BMI 27–35 kg/m²) scheduled for robotic-assisted radical prostatectomy.
+          The OptiWeight-PC tool is designed to support clinical and policy decision-making for pre-operative weight management in men with obesity (BMI 27–35 kg/m²) and prostate cancer. This platform integrates patient preference data, efficacy evidence, and cost-effectiveness principles to predict real-world uptake and health-economic value of alternative weight loss strategies.
         </p>
-        <ul class="intro-list">
-          <li>🧮 <strong>Personalise</strong> programme features and instantly visualise the impact on uptake, costs, and benefits.</li>
-          <li>📊 <strong>Simulate uncertainty</strong> in cost-effectiveness, using real-world clinical and economic data.</li>
-          <li>💾 <strong>Save scenarios</strong> and <strong>export reports</strong> with all charts for robust shared decision making.</li>
-        </ul>
-        <p>
-          <small>
-            Evidence sources: DCE models, STEP-1/LookAHEAD trials, Bolenz et al. (2010), NHS cost data.<br>
-            <a href="https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(21)00012-8/fulltext" target="_blank">See example research.</a>
-          </small>
-        </p>
+        <h3>How to Use This Tool</h3>
+        <ol>
+          <li>Review the intervention attributes and their clinical significance.</li>
+          <li>Customise the programme on the <b>Inputs</b> tab.</li>
+          <li>View modelled patient uptake, detailed cost-benefit analysis, and ICER simulation under uncertainty.</li>
+          <li>Save different configurations and export a comprehensive report.</li>
+        </ol>
+        <div class="info-panel">
+          <strong>Evidence Base:</strong> Data from STEP-1, LookAHEAD, Bolenz et al. (2010), NHS Digital App, and published DCE literature.<br>
+          For full methodology, see <a href="https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(21)00012-8/fulltext" target="_blank">The Lancet Public Health</a>.
+        </div>
       </div>
     </section>
-
-    <!-- ATTRIBUTES & LEVELS -->
+    <!-- ATTRIBUTES -->
     <section id="attr" class="tab-content">
       <h2>Programme Attributes and Levels</h2>
       <div class="canvas">
         <div class="grid attr-grid">
           <div class="box">
             <strong>BMI</strong>
-            <span class="tip" data-tip="Baseline body-mass index for eligibility. Higher BMI raises surgical risk.">?</span>
-            <p class="level">27–35 kg/m²</p>
-            <div class="desc">The tool is validated for this BMI range, in line with clinical trial patients.</div>
+            <span class="tip" data-tip="Baseline BMI. Tool applies to BMI 27–35 kg/m².">?</span>
+            <div class="level">27–35 kg/m²</div>
+            <div class="desc">Eligibility for pre-operative programme.</div>
           </div>
           <div class="box">
             <strong>Cost per Month (£)</strong>
-            <span class="tip" data-tip="Out-of-pocket or NHS/payer cost, per month. Includes drug/app/service fees.">?</span>
-            <p class="level">0–300</p>
-            <div class="desc">Semaglutide (Wegovy): ~£175; NHS Digital App: lower.</div>
+            <span class="tip" data-tip="Monthly patient or payer cost. NHS Wegovy ~£175/mo.">?</span>
+            <div class="level">0–300</div>
+            <div class="desc">Range covers medication, app, and professional support.</div>
           </div>
           <div class="box">
             <strong>Efficacy (BMI reduction)</strong>
-            <span class="tip" data-tip="Expected reduction in BMI after 12 months on programme.">?</span>
-            <p class="level">0–10 kg/m²</p>
-            <div class="desc">Semaglutide: ~5.5; Lifestyle: 1–4; Combined: 4–7 (per RCTs).</div>
+            <span class="tip" data-tip="Expected BMI change over 12 months.">?</span>
+            <div class="level">0–10 kg/m²</div>
+            <div class="desc">Semaglutide: ~5.5; Lifestyle: 1–4; Combined: 4–7.</div>
           </div>
           <div class="box">
             <strong>Side-effects</strong>
-            <span class="tip" data-tip="0 = none, 1 = mild/transient, 2 = moderate/persistent">?</span>
-            <p class="level">None, Mild, Moderate</p>
-            <div class="desc">GI effects most common for medication (up to 30% transient).</div>
+            <span class="tip" data-tip="Severity: 0=None, 1=Mild, 2=Moderate.">?</span>
+            <div class="level">None, Mild, Moderate</div>
+            <div class="desc">GI side-effects (nausea) common with injections.</div>
           </div>
           <div class="box">
             <strong>Frequency</strong>
-            <span class="tip" data-tip="How often patients interact with the programme (injection or coaching).">?</span>
-            <p class="level">Weekly, Monthly</p>
-            <div class="desc">Weekly for injections; monthly for lifestyle/app monitoring.</div>
+            <span class="tip" data-tip="Visit or injection frequency.">?</span>
+            <div class="level">Weekly, Monthly</div>
+            <div class="desc">Injection: weekly. App/coach: monthly.</div>
           </div>
           <div class="box">
             <strong>Method</strong>
-            <span class="tip" data-tip="Drug via injection or lifestyle modification only.">?</span>
-            <p class="level">Injection, Lifestyle</p>
-            <div class="desc">Injection (Semaglutide) vs. NHS App/dietitian-led support.</div>
+            <span class="tip" data-tip="Delivery: Injection or lifestyle-only.">?</span>
+            <div class="level">Injection, Lifestyle</div>
+            <div class="desc">Lifestyle: digital/app-based or in-person.</div>
           </div>
           <div class="box">
             <strong>Duration</strong>
-            <span class="tip" data-tip="Total length of the programme.">?</span>
-            <p class="level">6, 12 months</p>
-            <div class="desc">Longer duration generally yields greater BMI loss but higher costs.</div>
+            <span class="tip" data-tip="Programme length in months.">?</span>
+            <div class="level">6, 12 months</div>
+            <div class="desc">Longer duration may increase benefit, cost, and risk.</div>
           </div>
           <div class="box">
             <strong>Programme Type</strong>
-            <span class="tip" data-tip="Combined (drug + lifestyle) vs. lifestyle-only.">?</span>
-            <p class="level">Combined, Lifestyle</p>
-            <div class="desc">Combined approaches maximise benefit but cost more and may increase side-effects.</div>
+            <span class="tip" data-tip="Combined (drug + lifestyle) vs lifestyle alone.">?</span>
+            <div class="level">Combined, Lifestyle</div>
+            <div class="desc">Combined is more effective but costlier and may have more side-effects.</div>
           </div>
         </div>
       </div>
       <div class="card">
-        <h3>How Attributes Drive Outcomes</h3>
+        <h3>Interpretation Guidance</h3>
         <ul>
-          <li>Greater efficacy reduces surgical risk (e.g., 20% lower incontinence with 5+ kg/m² loss).</li>
-          <li>Side-effects can decrease patient acceptance (uptake).</li>
-          <li>Combined approaches are most effective but costlier and may have more side-effects.</li>
+          <li><b>Greater efficacy</b> (larger BMI loss) is linked to lower surgical risk and better quality of life.</li>
+          <li><b>Severe side-effects</b> and higher costs reduce patient uptake.</li>
+          <li><b>Combined approaches</b> yield the best health outcomes but may be less cost-effective if uptake is low or cost is high.</li>
         </ul>
       </div>
     </section>
-
     <!-- INPUTS -->
     <section id="inputs" class="tab-content">
       <h2>Customise Your Programme</h2>
@@ -119,12 +115,12 @@
           <div class="box">
             <label for="bmi">BMI (<span id="bmiVal">30</span>)</label>
             <input type="range" id="bmi" min="27" max="35" step="0.1" value="30">
-            <div class="mini-desc">Set patient's baseline BMI.</div>
+            <div class="mini-desc">Select the patient's BMI (27–35 kg/m²).</div>
           </div>
           <div class="box">
             <label for="cost">Cost per Month £ (<span id="costVal">175</span>)</label>
             <input type="range" id="cost" min="0" max="300" step="1" value="175">
-            <div class="mini-desc">Programme or medication cost.</div>
+            <div class="mini-desc">Monthly programme cost (drug, app, support).</div>
           </div>
           <div class="box">
             <label for="eff">Efficacy kg/m² (<span id="effVal">5.5</span>)</label>
@@ -138,7 +134,7 @@
               <label><input type="radio" name="side" value="1">Mild</label>
               <label><input type="radio" name="side" value="2">Moderate</label>
             </div>
-            <div class="mini-desc">Estimate based on intervention.</div>
+            <div class="mini-desc">Estimate severity for chosen method.</div>
           </div>
           <div class="box">
             <label>Frequency</label>
@@ -182,59 +178,55 @@
         </div>
       </div>
     </section>
-
     <!-- PREDICTED UPTAKE -->
     <section id="uptake" class="tab-content">
       <h2>Predicted Uptake</h2>
       <div class="card">
         <p>
-          <strong>Predicted uptake</strong> is the proportion of patients expected to choose this programme, based on preference-based choice modelling.<br>
-          <strong>Green:</strong> Accept the programme<br>
-          <strong>Red:</strong> Decline/opt-out (status quo)<br>
-          Uptake is affected by efficacy, cost, side-effect burden, and mode of delivery.
+          This section displays the proportion of patients expected to accept the specified programme. Uptake is derived from a validated discrete choice model and is sensitive to programme cost, efficacy, side-effects, and delivery method. Programmes with low predicted uptake are unlikely to deliver meaningful population benefit, even if clinically effective.
         </p>
       </div>
       <div id="upText" class="up-details"></div>
       <canvas id="upChart"></canvas>
       <div class="chart-explanation">
+        <ul>
+          <li><b>Green:</b> % predicted to accept the programme</li>
+          <li><b>Red:</b> % likely to opt out</li>
+        </ul>
         <p>
-          <strong>Interpretation:</strong> Higher predicted uptake suggests greater real-world population impact and justifies investment.
+          Higher uptake supports broader adoption and policy investment. Consider optimising both clinical efficacy and patient-centred acceptability.
         </p>
       </div>
     </section>
-
     <!-- COST-BENEFIT -->
     <section id="cba" class="tab-content">
       <h2>Cost-Benefit Analysis</h2>
       <div class="card">
         <p>
-          This analysis combines programme costs (drug, monitoring, admin, training) and expected clinical/economic benefit (surgical savings, QALY gain).<br>
-          <strong>Net benefit</strong> = clinical savings + QALY value – total cost.<br>
-          <strong>ICER</strong> (Incremental Cost-Effectiveness Ratio) and full simulation displayed below.
+          The economic model combines direct costs (drug, monitoring, admin, training) with clinical and quality-of-life benefit (surgical complication savings, QALY gain). The Incremental Cost-Effectiveness Ratio (ICER) is calculated and a probabilistic sensitivity analysis simulates uncertainty.
         </p>
       </div>
       <div id="cbTable"></div>
       <canvas id="cbChart"></canvas>
       <div class="chart-explanation">
         <p>
-          <strong>Bar chart:</strong> Red = cost; Blue = clinical savings; Yellow = QALY value; Teal = net benefit.
+          <b>Interpretation:</b> Lower cost, higher net benefit, and ICER below the threshold (commonly £20,000–£30,000/QALY in the UK) suggest strong value for money.
         </p>
       </div>
       <div style="margin:32px 0 0 0;">
         <h3>ICER Uncertainty Simulation</h3>
         <p>
-          This simulation visualises 500 draws of the ICER (£/QALY), varying costs and QALY by ±30%. Use this to understand cost-effectiveness robustness under parameter uncertainty.
+          This histogram displays 500 model runs with ±30% variation in both cost and QALY value, illustrating the plausible range of ICER results. A narrow, low-distribution indicates robust cost-effectiveness.
         </p>
         <canvas id="simChart" style="display:none"></canvas>
       </div>
     </section>
-
     <!-- SAVED SCENARIOS -->
     <section id="scenarios" class="tab-content">
-      <h2>Saved Scenarios &amp; PDF Export</h2>
+      <h2>Saved Scenarios and Report Export</h2>
       <div class="card">
         <p>
-          Save any number of scenario configurations for robust comparison. Export a summary PDF for patient or board review.
+          Save multiple programme configurations for side-by-side comparison. Use the export button to create a detailed PDF report of all results and plots for clinical records or policy review.
         </p>
       </div>
       <ul id="scList"></ul>
