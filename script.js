@@ -4,7 +4,7 @@ let scenarios = [];
 let currentResults = {};
 let simData = [];
 
-// Event listeners for sliders (live value update)
+// Event listeners for sliderss (live value update)
 document.getElementById('bmi').addEventListener('input', (e) => document.getElementById('bmiValue').textContent = e.target.value);
 document.getElementById('cost').addEventListener('input', (e) => document.getElementById('costValue').textContent = e.target.value);
 document.getElementById('efficacy').addEventListener('input', (e) => document.getElementById('efficacyValue').textContent = e.target.value);
