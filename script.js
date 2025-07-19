@@ -3,7 +3,7 @@ const $ = sel => document.querySelector(sel);
 const $$ = sel => document.querySelectorAll(sel);
 const getRadio = name => document.querySelector(`input[name="${name}"]:checked`).value;
 
-// ————— STATE —————
+// ————— STATEe —————
 let upChart, cbChart, simChart, current = null, scenarios = [];
 
 // ————— TAB HANDLING —————
