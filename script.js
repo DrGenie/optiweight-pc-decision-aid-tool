@@ -1,6 +1,15 @@
-let chart;
+let uptakeChart, cbaChart;
 let scenarios = [];
 let currentResults = {};
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+});
 
 function calculate() {
     const bmi = parseFloat(document.getElementById('bmi').value);
@@ -17,9 +26,9 @@ function calculate() {
     const duration = parseInt(document.getElementById('duration').value);
     const programme = document.getElementById('programme').value;
 
-    // Dummy betas for mixed logit utility
+    // Mixed logit utility (dummy betas)
     const beta_cost = -0.01;
-    const beta_efficacy = 0.5; // Higher reduction better
+    const beta_efficacy = 0.5;
     const beta_side = -0.2;
     const beta_freq = frequency === 'weekly' ? -0.1 : 0;
     const beta_method = method === 'injection' ? -0.05 : 0;
@@ -31,43 +40,69 @@ function calculate() {
     const U_optout = 0;
     const P_i = Math.exp(U_i) / (Math.exp(U_i) + Math.exp(U_optout));
 
-    // Dummy CBA
+    // Detailed CBA
+    const drug_cost = method === 'injection' ? cost * 0.8 : 0; // 80% drug
+    const monitoring_cost = cost * 0.15; // 15% monitoring
+    const other_cost = cost * 0.05; // 5% other
     const total_cost = cost * duration;
-    const benefit = efficacy * 100; // £100 per unit BMI reduction (dummy)
+    const benefit = efficacy * 590; // Savings from reduced complications (Bolenz et al.)
     const net_benefit = benefit - total_cost;
-    const qaly_gain = efficacy / 10; // Dummy QALY
+    const qaly_gain = efficacy / 5; // Dummy QALY (adjusted for realism)
     const icer = total_cost / qaly_gain;
 
     currentResults = {
-        uptake_prob: (P_i * 100).toFixed(2) + '%',
-        total_cost: '£' + total_cost.toFixed(2),
-        net_benefit: '£' + net_benefit.toFixed(2),
-        icer: '£' + icer.toFixed(2) + '/QALY'
+        uptake_prob: (P_i * 100).toFixed(2),
+        total_cost,
+        drug_cost: (drug_cost * duration).toFixed(2),
+        monitoring_cost: (monitoring_cost * duration).toFixed(2),
+        other_cost: (other_cost * duration).toFixed(2),
+        net_benefit: net_benefit.toFixed(2),
+        icer: icer.toFixed(2),
+        qaly_gain: qaly_gain.toFixed(2)
     };
 
-    // Update table
-    const tbody = document.querySelector('#resultTable tbody');
-    tbody.innerHTML = '';
-    Object.entries(currentResults).forEach(([key, value]) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `<td>${key.replace('_', ' ').toUpperCase()}</td><td>${value}</td>`;
-        tbody.appendChild(row);
+    // Dynamic recommendations
+    let recs = '';
+    if (P_i < 0.5) recs += '<p>Low uptake predicted; consider reducing cost or side effects.</p>';
+    if (efficacy < 5) recs += '<p>Increase efficacy target for better outcomes (aim >5 kg/m² reduction).</p>';
+    if (icer > 20000) recs += '<p>ICER exceeds £20,000/QALY; evaluate cost reductions.</p>';
+    document.getElementById('recommendations').innerHTML = recs || '<p>Scenario looks optimal.</p>';
+
+    // Update Uptake Tab
+    document.getElementById('uptakeResults').innerHTML = `<p>Uptake Probability: ${currentResults.uptake_prob}%</p>`;
+    const uptakeCtx = document.getElementById('uptakeChart').getContext('2d');
+    if (uptakeChart) uptakeChart.destroy();
+    uptakeChart = new Chart(uptakeCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Uptake', 'Opt-Out'],
+            datasets: [{ data: [P_i * 100, 100 - P_i * 100], backgroundColor: ['#28a745', '#dc3545'] }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'top' } } }
     });
 
-    // Update chart
-    const ctx = document.getElementById('uptakeChart').getContext('2d');
-    if (chart) chart.destroy();
-    chart = new Chart(ctx, {
+    // Update CBA Tab
+    let cbaHtml = `
+        <table>
+            <tr><th>Component</th><th>Value (£)</th></tr>
+            <tr><td>Drug Cost</td><td>${currentResults.drug_cost}</td></tr>
+            <tr><td>Monitoring Cost</td><td>${currentResults.monitoring_cost}</td></tr>
+            <tr><td>Other Cost</td><td>${currentResults.other_cost}</td></tr>
+            <tr><td>Total Cost</td><td>${currentResults.total_cost.toFixed(2)}</td></tr>
+            <tr><td>Net Benefit</td><td>${currentResults.net_benefit}</td></tr>
+            <tr><td>ICER (/QALY)</td><td>${currentResults.icer}</td></tr>
+            <tr><td>QALY Gain</td><td>${currentResults.qaly_gain}</td></tr>
+        </table>`;
+    document.getElementById('cbaResults').innerHTML = cbaHtml;
+    const cbaCtx = document.getElementById('cbaChart').getContext('2d');
+    if (cbaChart) cbaChart.destroy();
+    cbaChart = new Chart(cbaCtx, {
         type: 'bar',
         data: {
-            labels: ['Uptake Probability', 'Net Benefit', 'ICER'],
-            datasets: [{
-                label: 'Results',
-                data: [P_i * 100, net_benefit, icer],
-                backgroundColor: ['#4CAF50', '#2196F3', '#FFC107']
-            }]
+            labels: ['Total Cost', 'Net Benefit', 'ICER'],
+            datasets: [{ label: 'CBA Metrics', data: [total_cost, net_benefit, icer], backgroundColor: ['#ffc107', '#17a2b8', '#007bff'] }]
         },
-        options: { scales: { y: { beginAtZero: true } } }
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
 }
 
@@ -95,7 +130,7 @@ function updateScenarioList() {
     list.innerHTML = '';
     scenarios.forEach((sc, index) => {
         const li = document.createElement('li');
-        li.innerHTML = `Scenario ${index + 1}: BMI=${sc.inputs.bmi}, Uptake=${sc.results.uptake_prob}, ICER=${sc.results.icer}`;
+        li.innerHTML = `Scenario ${index + 1}: BMI=${sc.inputs.bmi}, Uptake=${sc.results.uptake_prob}%, ICER=£${sc.results.icer}/QALY`;
         list.appendChild(li);
     });
 }
@@ -107,17 +142,20 @@ function generatePDF() {
     }
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    doc.text('OptiWeight-PC Results', 10, 10);
+    doc.text('OptiWeight-PC Report', 10, 10);
     let y = 20;
-    Object.entries(currentResults).forEach(([key, value]) => {
-        doc.text(`${key.replace('_', ' ').toUpperCase()}: ${value}`, 10, y);
-        y += 10;
-    });
+    doc.text(`Uptake Probability: ${currentResults.uptake_prob}%`, 10, y); y += 10;
+    doc.text(`Total Cost: £${currentResults.total_cost.toFixed(2)}`, 10, y); y += 10;
+    doc.text(`Net Benefit: £${currentResults.net_benefit}`, 10, y); y += 10;
+    doc.text(`ICER: £${currentResults.icer}/QALY`, 10, y); y += 10;
 
-    // Add chart image if available
-    if (chart) {
-        const chartImg = document.getElementById('uptakeChart').toDataURL('image/png');
-        doc.addImage(chartImg, 'PNG', 10, y, 180, 90);
+    if (uptakeChart) {
+        const uptakeImg = document.getElementById('uptakeChart').toDataURL('image/png');
+        doc.addImage(uptakeImg, 'PNG', 10, y, 90, 45); y += 50;
+    }
+    if (cbaChart) {
+        const cbaImg = document.getElementById('cbaChart').toDataURL('image/png');
+        doc.addImage(cbaImg, 'PNG', 10, y, 90, 45);
     }
 
     doc.save('optiweight_report.pdf');
