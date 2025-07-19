@@ -1,31 +1,44 @@
+:root {
+    --primary-color: #0055b3; /* Deep professional blue */
+    --primary-dark: #003d8f;
+    --secondary-color: #009688; /* Teal for vibrancy */
+    --secondary-dark: #00695c;
+    --accent-color: #d81b60; /* Pink for emphasis */
+    --background-color: #f5f8fa; /* Light blue-gray background */
+    --card-background: #ffffff;
+    --text-color: #1a1a1a; /* Dark gray for readability */
+    --shadow-color: rgba(0, 0, 0, 0.15);
+    --border-color: #e0e6ed;
+}
+
 body {
-    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
     margin: 0;
-    background: linear-gradient(to bottom, #f1f3f5, #dee2e6);
-    color: #2d3748;
+    background: var(--background-color);
+    color: var(--text-color);
     font-size: 16px;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 .container {
     max-width: 95%;
     margin: 20px auto;
     padding: 20px;
-    background: #ffffff;
+    background: var(--card-background);
     border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 16px var(--shadow-color);
 }
 
 h1 {
     text-align: center;
-    color: #1a73e8;
-    margin-bottom: 20px;
+    color: var(--primary-color);
     font-size: 1.8em;
     font-weight: 700;
+    margin-bottom: 20px;
 }
 
 h2 {
-    color: #1a73e8;
+    color: var(--primary-dark);
     font-size: 1.4em;
     margin-bottom: 10px;
 }
@@ -34,38 +47,39 @@ h2 {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    background: #ffffff;
-    border-bottom: 2px solid #e2e8f0;
+    background: var(--card-background);
     padding: 10px 0;
-    border-radius: 8px 8px 0 0;
+    border-bottom: 2px solid var(--border-color);
+    border-radius: 12px 12px 0 0;
 }
 
 .tab-btn {
     padding: 10px 20px;
     margin: 5px;
-    background: #edf2f7;
+    background: var(--background-color);
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    color: #4a5568;
+    color: var(--text-color);
     transition: all 0.3s ease;
     font-size: 0.9em;
 }
 
 .tab-btn:hover {
-    background: #cbd5e0;
+    background: var(--primary-color);
+    color: #ffffff;
 }
 
 .tab-btn.active {
-    background: #1a73e8;
+    background: var(--primary-dark);
     color: #ffffff;
 }
 
 .tab-content {
     display: none;
     padding: 20px;
-    background: #f7fafc;
+    background: var(--background-color);
     border-radius: 8px;
     margin-top: 10px;
 }
@@ -76,15 +90,46 @@ h2 {
 
 .attribute-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 15px;
 }
 
-.attribute-item {
-    background: #ffffff;
+.attribute-box {
+    background: var(--card-background);
     padding: 15px;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
+    position: relative;
+}
+
+.tooltip {
+    cursor: help;
+    background: var(--accent-color);
+    color: #ffffff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8em;
+    margin-left: 5px;
+    position: relative;
+}
+
+.tooltip:hover:after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary-dark);
+    color: #ffffff;
+    padding: 8px;
+    border-radius: 6px;
+    width: 200px;
+    font-size: 0.8em;
+    z-index: 10;
 }
 
 form {
@@ -94,29 +139,30 @@ form {
 }
 
 .input-box {
-    background: #ffffff;
+    background: var(--card-background);
     padding: 15px;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px var(--shadow-color);
 }
 
 label {
     font-weight: 600;
-    color: #2d3748;
+    color: var(--text-color);
     font-size: 1em;
 }
 
 input[type="range"] {
     width: 100%;
     margin: 10px 0;
+    accent-color: var(--secondary-color);
 }
 
 input[type="range"] + span {
     display: inline-block;
     margin-left: 10px;
     font-weight: 500;
-    color: #4a5568;
+    color: var(--text-color);
 }
 
 .radio-group {
@@ -133,17 +179,19 @@ input[type="range"] + span {
 
 .radio-group input {
     margin-right: 5px;
+    accent-color: var(--secondary-color);
 }
 
 .button-group {
     display: flex;
     gap: 10px;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 button {
     padding: 12px 20px;
-    background: #28a745;
+    background: var(--secondary-color);
     color: #ffffff;
     border: none;
     border-radius: 6px;
@@ -154,7 +202,7 @@ button {
 }
 
 button:hover {
-    background: #219653;
+    background: var(--secondary-dark);
 }
 
 button:disabled {
@@ -168,7 +216,44 @@ button:disabled {
     background: #e6fffa;
     border: 1px solid #b2f5ea;
     border-radius: 8px;
-    color: #1c4532;
+    color: var(--text-color);
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.popup-content {
+    background: var(--card-background);
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 16px var(--shadow-color);
+    position: relative;
+}
+
+.close-popup {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2em;
+    cursor: pointer;
+    color: var(--accent-color);
+}
+
+.popup.active {
+    display: flex;
 }
 
 ul {
@@ -179,8 +264,8 @@ ul {
 li {
     margin-bottom: 12px;
     padding: 12px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
 }
 
@@ -192,20 +277,20 @@ table {
 }
 
 th, td {
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     padding: 10px;
     text-align: left;
 }
 
 th {
-    background: #edf2f7;
+    background: var(--background-color);
     font-weight: 600;
 }
 
 canvas {
     margin-top: 15px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     max-width: 100%;
     height: auto;
@@ -236,5 +321,8 @@ canvas {
     }
     .button-group {
         flex-direction: column;
+    }
+    .popup-content {
+        max-width: 95%;
     }
 }
