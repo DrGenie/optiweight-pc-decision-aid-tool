@@ -1,173 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OptiWeight-PC Decision Aid Tool</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="script.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OptiWeight-PC Decision Aid Tool</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
-    <div class="container">
-        <h1>OptiWeight-PC Decision Aid Tool</h1>
-        <nav class="tab-nav">
-            <button class="tab-btn active" data-tab="introduction">Introduction</button>
-            <button class="tab-btn" data-tab="attributes">Attributes & Levels</button>
-            <button class="tab-btn" data-tab="inputs">Inputs</button>
-            <button class="tab-btn" data-tab="uptake">Predicted Uptake</button>
-            <button class="tab-btn" data-tab="cost-benefit">Cost-Benefit Analysis</button>
-            <button class="tab-btn" data-tab="scenarios">Saved Scenarios</button>
-        </nav>
-        
-        <div id="introduction" class="tab-content active">
-            <h2>Introduction</h2>
-            <p>This professional tool assists patients, clinicians, and policymakers in evaluating weight loss strategies for obese individuals with prostate cancer before robotic-assisted radical prostatectomy. It integrates patient preferences from Discrete Choice Experiments (DCE) with cost-benefit analyses to predict intervention uptake and economic viability, drawing from clinical trials like STEP-1 and Look AHEAD.</p>
-            <p>Weight loss can significantly lower surgery complications, such as a 20% reduction in incontinence risk. Semaglutide (Wegovy) typically achieves ~5.54 kg/m² BMI reduction over 12 months but may cause gastrointestinal side effects. Lifestyle changes (diet/exercise via NHS app) are safer but may have lower efficacy. Navigate the tabs to input attributes, calculate predictions, simulate uncertainty, and generate reports.</p>
+  <header>
+    <h1>OptiWeight-PC <span>Decision Aid Tool</span></h1>
+  </header>
+
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="intro">Introduction</button>
+    <button class="tab-btn" data-tab="attr">Attributes &amp; Levels</button>
+    <button class="tab-btn" data-tab="inputs">Inputs</button>
+    <button class="tab-btn" data-tab="uptake">Predicted Uptake</button>
+    <button class="tab-btn" data-tab="cba">Cost-Benefit</button>
+    <button class="tab-btn" data-tab="scenarios">Saved Scenarios</button>
+  </nav>
+
+  <main>
+    <!-- INTRODUCTION -->
+    <section id="intro" class="tab-content active">
+      <div class="card">
+        <h2>Welcome to the OptiWeight-PC Decision Aid</h2>
+        <p>
+          This interactive tool empowers <strong>patients, clinicians, and policy-makers</strong> to explore the trade-offs, benefits, and expected outcomes of weight loss programmes for men with obesity (BMI 27–35 kg/m²) scheduled for robotic-assisted radical prostatectomy.
+        </p>
+        <ul class="intro-list">
+          <li>🧮 <strong>Personalise</strong> programme features and instantly visualise the impact on uptake, costs, and benefits.</li>
+          <li>📊 <strong>Simulate uncertainty</strong> in cost-effectiveness, using real-world clinical and economic data.</li>
+          <li>💾 <strong>Save scenarios</strong> and <strong>export reports</strong> with all charts for robust shared decision making.</li>
+        </ul>
+        <p>
+          <small>
+            Evidence sources: DCE models, STEP-1/LookAHEAD trials, Bolenz et al. (2010), NHS cost data.<br>
+            <a href="https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(21)00012-8/fulltext" target="_blank">See example research.</a>
+          </small>
+        </p>
+      </div>
+    </section>
+
+    <!-- ATTRIBUTES & LEVELS -->
+    <section id="attr" class="tab-content">
+      <h2>Programme Attributes and Levels</h2>
+      <div class="canvas">
+        <div class="grid attr-grid">
+          <div class="box">
+            <strong>BMI</strong>
+            <span class="tip" data-tip="Baseline body-mass index for eligibility. Higher BMI raises surgical risk.">?</span>
+            <p class="level">27–35 kg/m²</p>
+            <div class="desc">The tool is validated for this BMI range, in line with clinical trial populations.</div>
+          </div>
+          <div class="box">
+            <strong>Cost per Month (£)</strong>
+            <span class="tip" data-tip="Out-of-pocket or NHS/payer cost, per month. Includes drug/app/service fees.">?</span>
+            <p class="level">0–300</p>
+            <div class="desc">Semaglutide (Wegovy): ~£175; NHS Digital App: lower.</div>
+          </div>
+          <div class="box">
+            <strong>Efficacy (BMI reduction)</strong>
+            <span class="tip" data-tip="Expected reduction in BMI after 12 months on programme.">?</span>
+            <p class="level">0–10 kg/m²</p>
+            <div class="desc">Semaglutide: ~5.5; Lifestyle: 1–4; Combined: 4–7 (per RCTs).</div>
+          </div>
+          <div class="box">
+            <strong>Side-effects</strong>
+            <span class="tip" data-tip="0 = none, 1 = mild/transient, 2 = moderate/persistent">?</span>
+            <p class="level">None, Mild, Moderate</p>
+            <div class="desc">GI effects most common for medication (up to 30% transient).</div>
+          </div>
+          <div class="box">
+            <strong>Frequency</strong>
+            <span class="tip" data-tip="How often patients interact with the programme (injection or coaching).">?</span>
+            <p class="level">Weekly, Monthly</p>
+            <div class="desc">Weekly for injections; monthly for lifestyle/app monitoring.</div>
+          </div>
+          <div class="box">
+            <strong>Method</strong>
+            <span class="tip" data-tip="Drug via injection or lifestyle modification only.">?</span>
+            <p class="level">Injection, Lifestyle</p>
+            <div class="desc">Injection (Semaglutide) vs. NHS App/dietitian-led support.</div>
+          </div>
+          <div class="box">
+            <strong>Duration</strong>
+            <span class="tip" data-tip="Total length of the programme.">?</span>
+            <p class="level">6, 12 months</p>
+            <div class="desc">Longer duration generally yields greater BMI loss but higher costs.</div>
+          </div>
+          <div class="box">
+            <strong>Programme Type</strong>
+            <span class="tip" data-tip="Combined (drug + lifestyle) vs. lifestyle-only.">?</span>
+            <p class="level">Combined, Lifestyle</p>
+            <div class="desc">Combined approaches maximise benefit but cost more and may increase side-effects.</div>
+          </div>
         </div>
-        
-        <div id="attributes" class="tab-content">
-            <h2>Attributes & Levels</h2>
-            <p>These attributes define the key features of weight loss programs, based on clinical research and trial data. Hover over the "?" for detailed tooltips.</p>
-            <div class="attribute-list">
-                <div class="attribute-box">
-                    <strong>BMI</strong><span class="tooltip" data-tooltip="Body Mass Index measures obesity; higher values increase surgical risks like incontinence and complications. Range ensures eligibility for the proposed trial.">?</span><br>
-                    <strong>Levels</strong>: 27-35 kg/m²<br>
-                    <strong>Description</strong>: Patient's starting BMI, a critical factor for perioperative optimization.
-                </div>
-                <div class="attribute-box">
-                    <strong>Cost per Month (£)</strong><span class="tooltip" data-tooltip="Monthly expense, including drug acquisition (Semaglutide ~£73 starter to £175 maintenance per NHS/BNF pricing) or lifestyle program fees. Impacts patient uptake and cost-effectiveness.">?</span><br>
-                    <strong>Levels</strong>: £0-300<br>
-                    <strong>Description</strong>: Financial burden of the intervention, influencing accessibility and guideline adoption.
-                </div>
-                <div class="attribute-box">
-                    <strong>Efficacy (BMI Reduction)</strong><span class="tooltip" data-tooltip="Expected BMI decrease from trials like STEP-1; e.g., 5.54 kg/m² with Semaglutide reduces post-op incontinence by ~20% (meta-analysis data). Higher efficacy improves oncological and functional outcomes.">?</span><br>
-                    <strong>Levels</strong>: 0-10 kg/m²<br>
-                    <strong>Description</strong>: Measure of weight loss effectiveness, directly linked to reduced surgical complications.
-                </div>
-                <div class="attribute-box">
-                    <strong>Side Effects</strong><span class="tooltip" data-tooltip="Severity levels: None (typical for lifestyle), Mild (e.g., nausea with GLP-1 agonists), Moderate (GI issues). Affects patient preference and compliance in DCE studies.">?</span><br>
-                    <strong>Levels</strong>: None, Mild, Moderate<br>
-                    <strong>Description</strong>: Potential adverse effects, a key consideration for patient-centered decision-making.
-                </div>
-                <div class="attribute-box">
-                    <strong>Frequency</strong><span class="tooltip" data-tooltip="Administration schedule: Weekly for Semaglutide injections, Monthly for lifestyle check-ins. Influences convenience and adherence rates.">?</span><br>
-                    <strong>Levels</strong>: Weekly, Monthly<br>
-                    <strong>Description</strong>: How often the intervention is required, impacting patient burden.
-                </div>
-                <div class="attribute-box">
-                    <strong>Method</strong><span class="tooltip" data-tooltip="Delivery mode: Injection (Semaglutide, pharmacological), Lifestyle (diet/exercise via NHS Weight Loss Plan app). Method affects efficacy, cost, and side effects profile.">?</span><br>
-                    <strong>Levels</strong>: Injection, Lifestyle<br>
-                    <strong>Description</strong>: Approach to weight loss, balancing medical vs. behavioral strategies.
-                </div>
-                <div class="attribute-box">
-                    <strong>Duration (months)</strong><span class="tooltip" data-tooltip="Program length: 6 months (short-term pre-op), 12 months (full peri-op, covering recovery). Longer duration may enhance continence restoration per Look AHEAD data.">?</span><br>
-                    <strong>Levels</strong>: 6, 12<br>
-                    <strong>Description</strong>: Timeframe of the intervention, aligned with prostatectomy delay window (up to 6 months safe).
-                </div>
-                <div class="attribute-box">
-                    <strong>Programme Type</strong><span class="tooltip" data-tooltip="Structure: Combined (Semaglutide + lifestyle for synergistic effects), Lifestyle Alone (diet/exercise, lower cost/risk). Combined may yield 38% lower incontinence odds.">?</span><br>
-                    <strong>Levels</strong>: Combined, Lifestyle Alone<br>
-                    <strong>Description</strong>: Overall program design, optimizing for efficacy and feasibility.
-                </div>
+      </div>
+      <div class="card">
+        <h3>How Attributes Drive Outcomes</h3>
+        <ul>
+          <li>Greater efficacy reduces surgical risk (e.g., 20% lower incontinence with 5+ kg/m² loss).</li>
+          <li>Side-effects can decrease patient acceptance (uptake).</li>
+          <li>Combined approaches are most effective but costlier and may have more side-effects.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- INPUTS -->
+    <section id="inputs" class="tab-content">
+      <h2>Customise Your Programme</h2>
+      <div class="canvas">
+        <form id="inputForm" class="grid input-grid">
+          <div class="box">
+            <label for="bmi">BMI (<span id="bmiVal">30</span>)</label>
+            <input type="range" id="bmi" min="27" max="35" step="0.1" value="30">
+            <div class="mini-desc">Set patient's baseline BMI.</div>
+          </div>
+          <div class="box">
+            <label for="cost">Cost per Month £ (<span id="costVal">175</span>)</label>
+            <input type="range" id="cost" min="0" max="300" step="1" value="175">
+            <div class="mini-desc">Programme or medication cost.</div>
+          </div>
+          <div class="box">
+            <label for="eff">Efficacy kg/m² (<span id="effVal">5.5</span>)</label>
+            <input type="range" id="eff" min="0" max="10" step="0.1" value="5.5">
+            <div class="mini-desc">Expected BMI reduction at 12 months.</div>
+          </div>
+          <div class="box">
+            <label>Side-effects</label>
+            <div class="radio-group">
+              <label><input type="radio" name="side" value="0" checked>None</label>
+              <label><input type="radio" name="side" value="1">Mild</label>
+              <label><input type="radio" name="side" value="2">Moderate</label>
             </div>
-        </div>
-        
-        <div id="inputs" class="tab-content">
-            <h2>Inputs</h2>
-            <p>Customize the program attributes below. Click Calculate to view results and recommendations in a popup. Simulate to explore uncertainty.</p>
-            <form id="inputForm">
-                <div class="input-box">
-                    <label>BMI (27-35 kg/m²):</label>
-                    <input type="range" id="bmi" min="27" max="35" value="30" step="0.1" required>
-                    <span id="bmiValue">30</span>
-                </div>
-                <div class="input-box">
-                    <label>Cost per Month (£):</label>
-                    <input type="range" id="cost" min="0" max="300" value="175" step="1" required>
-                    <span id="costValue">175</span>
-                </div>
-                <div class="input-box">
-                    <label>Efficacy (BMI Reduction):</label>
-                    <input type="range" id="efficacy" min="0" max="10" value="5.54" step="0.1" required>
-                    <span id="efficacyValue">5.54</span>
-                </div>
-                <div class="input-box">
-                    <label>Side Effects:</label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="side_effects" value="0" checked> None</label>
-                        <label><input type="radio" name="side_effects" value="1"> Mild</label>
-                        <label><input type="radio" name="side_effects" value="2"> Moderate</label>
-                    </div>
-                </div>
-                <div class="input-box">
-                    <label>Frequency:</label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="frequency" value="weekly" checked> Weekly</label>
-                        <label><input type="radio" name="frequency" value="monthly"> Monthly</label>
-                    </div>
-                </div>
-                <div class="input-box">
-                    <label>Method:</label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="method" value="injection" checked> Injection</label>
-                        <label><input type="radio" name="method" value="lifestyle"> Lifestyle</label>
-                    </div>
-                </div>
-                <div class="input-box">
-                    <label>Duration (months):</label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="duration" value="6"> 6</label>
-                        <label><input type="radio" name="duration" value="12" checked> 12</label>
-                    </div>
-                </div>
-                <div class="input-box">
-                    <label>Programme Type:</label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="programme" value="combined" checked> Combined</label>
-                        <label><input type="radio" name="programme" value="lifestyle"> Lifestyle Alone</label>
-                    </div>
-                </div>
-            </form>
-            <div class="button-group">
-                <button id="calculateBtn">Calculate</button>
-                <button id="simulateBtn">Simulate Uncertainty</button>
+            <div class="mini-desc">Estimate based on intervention.</div>
+          </div>
+          <div class="box">
+            <label>Frequency</label>
+            <div class="radio-group">
+              <label><input type="radio" name="freq" value="weekly" checked>Weekly</label>
+              <label><input type="radio" name="freq" value="monthly">Monthly</label>
             </div>
-            <div id="resultsPopup" class="popup">
-                <div class="popup-content">
-                    <span class="close-popup">×</span>
-                    <h3>Calculation Results</h3>
-                    <div id="popupResults"></div>
-                    <div id="recommendations"></div>
-                </div>
+          </div>
+          <div class="box">
+            <label>Method</label>
+            <div class="radio-group">
+              <label><input type="radio" name="method" value="injection" checked>Injection</label>
+              <label><input type="radio" name="method" value="lifestyle">Lifestyle</label>
             </div>
-        </div>
-        
-        <div id="uptake" class="tab-content">
-            <h2>Predicted Uptake</h2>
-            <p>Shows the percentage of patients likely to choose this program based on preferences from DCE research. Higher uptake indicates greater acceptability.</p>
-            <div id="uptakeResults"></div>
-            <canvas id="uptakeChart"></canvas>
-        </div>
-        
-        <div id="cost-benefit" class="tab-content">
-            <h2>Cost-Benefit Analysis</h2>
-            <p>Compares detailed costs (e.g., drug acquisition, monitoring) to benefits (savings from reduced complications, QALY gains). Benefits are dynamically scaled by uptake probability for realistic projections. Costs derived from NHS/BNF data; benefits from Bolenz et al. and NICE guidelines.</p>
-            <div id="cbaResults"></div>
-            <canvas id="cbaChart"></canvas>
-            <canvas id="simChart"></canvas>
-        </div>
-        
-        <div id="scenarios" class="tab-content">
-            <h2>Saved Scenarios</h2>
-            <p>Save multiple scenarios for comparison, enabling iterative analysis to identify optimal interventions.</p>
-            <ul id="scenarioList"></ul>
-            <div class="button-group">
-                <button id="saveScenarioBtn">Save Current Scenario</button>
-                <button id="generatePDFBtn">Generate PDF Report</button>
+          </div>
+          <div class="box">
+            <label>Duration (months)</label>
+            <div class="radio-group">
+              <label><input type="radio" name="dur" value="6">6</label>
+              <label><input type="radio" name="dur" value="12" checked>12</label>
             </div>
+          </div>
+          <div class="box">
+            <label>Programme Type</label>
+            <div class="radio-group">
+              <label><input type="radio" name="prog" value="combined" checked>Combined</label>
+              <label><input type="radio" name="prog" value="lifestyle">Lifestyle</label>
+            </div>
+          </div>
+          <div class="full-span btn-row">
+            <button id="calcBtn" class="primary">Calculate</button>
+            <button id="simBtn" class="secondary" disabled>Simulate Uncertainty</button>
+          </div>
+          <div id="warn" class="full-span warn"></div>
+        </form>
+        <div id="popup" class="modal">
+          <div class="modal-content">
+            <span class="close">×</span>
+            <div id="popupBody"></div>
+          </div>
         </div>
-    </div>
+      </div>
+    </section>
+
+    <!-- PREDICTED UPTAKE -->
+    <section id="uptake" class="tab-content">
+      <h2>Predicted Uptake</h2>
+      <div class="card">
+        <p>
+          <strong>Predicted uptake</strong> is the proportion of patients expected to choose this programme, based on preference-based choice modelling.<br>
+          <strong>Green:</strong> Accept the programme<br>
+          <strong>Red:</strong> Decline/opt-out (status quo)<br>
+          Uptake is affected by efficacy, cost, side-effect burden, and mode of delivery.
+        </p>
+      </div>
+      <div id="upText" class="up-details"></div>
+      <canvas id="upChart"></canvas>
+      <div class="chart-explanation">
+        <p>
+          <strong>Interpretation:</strong> Higher predicted uptake suggests greater real-world population impact and justifies investment.
+        </p>
+      </div>
+    </section>
+
+    <!-- COST-BENEFIT -->
+    <section id="cba" class="tab-content">
+      <h2>Cost-Benefit Analysis</h2>
+      <div class="card">
+        <p>
+          This analysis combines programme costs (drug, monitoring, admin, training) and expected clinical/economic benefit (surgical savings, QALY gain).<br>
+          <strong>Net benefit</strong> = clinical savings + QALY value – total cost.<br>
+          <strong>ICER</strong> (Incremental Cost-Effectiveness Ratio) and full simulation displayed below.
+        </p>
+      </div>
+      <div id="cbTable"></div>
+      <canvas id="cbChart"></canvas>
+      <div class="chart-explanation">
+        <p>
+          <strong>Bar chart:</strong> Red = cost; Blue = clinical savings; Yellow = QALY value; Teal = net benefit.
+        </p>
+      </div>
+      <div style="margin:32px 0 0 0;">
+        <h3>ICER Uncertainty Simulation</h3>
+        <p>
+          This simulation visualises 500 draws of the ICER (£/QALY), varying costs and QALY by ±30%. Use this to understand cost-effectiveness robustness under parameter uncertainty.
+        </p>
+        <canvas id="simChart" style="display:none"></canvas>
+      </div>
+    </section>
+
+    <!-- SAVED SCENARIOS -->
+    <section id="scenarios" class="tab-content">
+      <h2>Saved Scenarios &amp; PDF Export</h2>
+      <div class="card">
+        <p>
+          Save any number of scenario configurations for robust comparison. Export a summary PDF for patient or board review.
+        </p>
+      </div>
+      <ul id="scList"></ul>
+      <div class="btn-row">
+        <button id="saveBtn" class="primary">Save Current Scenario</button>
+        <button id="pdfBtn" class="secondary">Export PDF Report</button>
+      </div>
+    </section>
+  </main>
 </body>
 </html>
