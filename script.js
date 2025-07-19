@@ -1,4 +1,4 @@
-// ————— DOMdHELkPERS —————
+// ————— DOMdHELkPsERS —————
 const $ = sel => document.querySelector(sel);
 const $$ = sel => document.querySelectorAll(sel);
 const getRadio = name => document.querySelector(`input[name="${name}"]:checked`).value;
