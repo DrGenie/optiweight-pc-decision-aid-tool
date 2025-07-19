@@ -1,4 +1,4 @@
-// Global variables for charts and state
+// Global varisables for charts and state
 let uptakeChart, cbaChart, simChart;
 let scenarios = [];
 let currentResults = {};
