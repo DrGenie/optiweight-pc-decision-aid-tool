@@ -5,142 +5,137 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OptiWeight-PC Decision Aid</title>
 
-  <!-- STYLE & LIBS -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!--  STYLES & LIBS  -->
   <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="script.js" defer></script>
 </head>
+
 <body>
-<div class="container">
-  <h1>OptiWeight-PC Decision Aid</h1>
+<header>
+  <h1>OptiWeight-PC <span>Decision Aid Tool</span></h1>
+</header>
 
-  <!-- TAB NAV -->
-  <nav class="tab-nav">
-    <button class="tab-btn active"  data-tab="introTab">Introduction</button>
-    <button class="tab-btn"         data-tab="attributesTab">Attributes & Levels</button>
-    <button class="tab-btn"         data-tab="inputsTab">Inputs</button>
-    <button class="tab-btn"         data-tab="uptakeTab">Predicted Uptake</button>
-    <button class="tab-btn"         data-tab="cbaTab">Cost-Benefit Analysis</button>
-    <button class="tab-btn"         data-tab="scenariosTab">Saved Scenarios</button>
-  </nav>
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="intro">Introduction</button>
+  <button class="tab-btn" data-tab="attr">Attributes &amp; Levels</button>
+  <button class="tab-btn" data-tab="inputs">Inputs</button>
+  <button class="tab-btn" data-tab="uptake">Predicted Uptake</button>
+  <button class="tab-btn" data-tab="cba">Cost-Benefit</button>
+  <button class="tab-btn" data-tab="scenarios">Saved Scenarios</button>
+</nav>
 
-  <!-- INTRO -->
-  <section id="introTab" class="tab-content active">
-    <h2>Introduction</h2>
-    <p>
-      This tool helps patients, clinicians and policy-makers evaluate weight-loss
-      programmes for men with BMI 27–35 kg/m² awaiting robotic radical prostatectomy.
-      It combines patient preference data (from a discrete-choice experiment) with
-      cost-effectiveness parameters to predict uptake.
-    </p>
-    <p>
-      Example benchmark: Semaglutide (Wegovy) reduces BMI by ≈5.5 kg/m² in 12 months
-      but causes nausea in &gt;30 % of patients; lifestyle programmes are safer but
-      slower. Navigate the tabs, adjust inputs, compare scenarios and export a PDF
-      report.
-    </p>
+<main>
+  <!-- ── Introduction ─────────────────────────────────────────── -->
+  <section id="intro" class="tab-content active">
+    <div class="card">
+      <h2>Purpose</h2>
+      <p>
+        This tool integrates patient preferences, clinical evidence and economic parameters to
+        help <strong>patients, clinicians and policy-makers</strong> evaluate pre-surgical weight-loss
+        options for obese men (BMI 27-35 kg/m²) scheduled for robotic radical prostatectomy.
+      </p>
+      <p>
+        Use the <em>Inputs</em> tab to tailor programme characteristics, then explore predicted uptake,
+        net benefits, ICER distributions and save multiple scenarios for comparison.
+      </p>
+    </div>
   </section>
 
-  <!-- ATTRIBUTES -->
-  <section id="attributesTab" class="tab-content">
-    <h2>Attributes & Levels</h2>
-    <div class="attribute-canvas">
-      <div class="attribute-list">
-        <div class="attribute-box">
-          <strong>BMI</strong>
-          <span class="tooltip" data-tooltip="Baseline body-mass index (tool valid for 27–35 kg/m²)">?</span>
-          <div class="level">27–35 kg/m²</div>
+  <!-- ── Attributes ────────────────────────────────────────────── -->
+  <section id="attr" class="tab-content">
+    <h2>Attributes &amp; Levels</h2>
+    <div class="canvas">
+      <div class="grid attr-grid">
+        <!-- One box per attribute -->
+        <div class="box">
+          <strong>BMI</strong><span class="tip" data-tip="Baseline body-mass index used for eligibility (27–35)">?</span>
+          <p class="level">27–35 kg/m²</p>
         </div>
-        <div class="attribute-box">
-          <strong>Cost / Month (£)</strong>
-          <span class="tooltip" data-tooltip="Monthly out-of-pocket or payer cost for drug/support">?</span>
-          <div class="level">0–300</div>
+        <div class="box">
+          <strong>Cost / Month (£)</strong><span class="tip" data-tip="Drug or programme fees (patient or payer)">?</span>
+          <p class="level">0–300</p>
         </div>
-        <div class="attribute-box">
-          <strong>Efficacy (BMI ↓)</strong>
-          <span class="tooltip" data-tooltip="Expected BMI reduction at 12 months">?</span>
-          <div class="level">0–10 kg/m²</div>
+        <div class="box">
+          <strong>Efficacy (BMI ↓)</strong><span class="tip" data-tip="Expected 12-month BMI reduction">?</span>
+          <p class="level">0–10 kg/m²</p>
         </div>
-        <div class="attribute-box">
-          <strong>Side Effects</strong>
-          <span class="tooltip" data-tooltip="0 = none, 1 = mild, 2 = moderate">?</span>
-          <div class="level">None, Mild, Moderate</div>
+        <div class="box">
+          <strong>Side-effects</strong><span class="tip" data-tip="0 None · 1 Mild · 2 Moderate">?</span>
+          <p class="level">0, 1, 2</p>
         </div>
-        <div class="attribute-box">
-          <strong>Frequency</strong>
-          <span class="tooltip" data-tooltip="Visit/injection frequency">?</span>
-          <div class="level">Weekly, Monthly</div>
+        <div class="box">
+          <strong>Frequency</strong><span class="tip" data-tip="Visit / injection frequency">?</span>
+          <p class="level">Weekly, Monthly</p>
         </div>
-        <div class="attribute-box">
-          <strong>Method</strong>
-          <span class="tooltip" data-tooltip="Pharmacological injection or lifestyle programme">?</span>
-          <div class="level">Injection, Lifestyle</div>
+        <div class="box">
+          <strong>Method</strong><span class="tip" data-tip="Injection vs lifestyle-only">?</span>
+          <p class="level">Injection, Lifestyle</p>
         </div>
-        <div class="attribute-box">
-          <strong>Duration</strong>
-          <span class="tooltip" data-tooltip="Programme length">?</span>
-          <div class="level">6 / 12 months</div>
+        <div class="box">
+          <strong>Duration</strong><span class="tip" data-tip="Programme length">?</span>
+          <p class="level">6 / 12 months</p>
         </div>
-        <div class="attribute-box">
-          <strong>Programme Type</strong>
-          <span class="tooltip" data-tooltip="Combined (drug + lifestyle) vs lifestyle-only">?</span>
-          <div class="level">Combined, Lifestyle</div>
+        <div class="box">
+          <strong>Programme Type</strong><span class="tip" data-tip="Combined (drug+app) vs Lifestyle alone">?</span>
+          <p class="level">Combined, Lifestyle</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- INPUTS -->
-  <section id="inputsTab" class="tab-content">
-    <h2>Inputs</h2>
-    <div class="input-canvas">
-      <form id="inputForm" class="input-form">
-        <!-- sliders / radios are generated exactly as requested -->
-        <div class="input-box">
+  <!-- ── Inputs ───────────────────────────────────────────────── -->
+  <section id="inputs" class="tab-content">
+    <h2>Customise Programme</h2>
+    <div class="canvas">
+      <form id="inputForm" class="grid input-grid">
+        <!-- Sliders ------------------------------------------------>
+        <div class="box">
           <label for="bmi">BMI (<span id="bmiVal">30</span>)</label>
           <input type="range" id="bmi" min="27" max="35" step="0.1" value="30">
         </div>
-        <div class="input-box">
-          <label for="cost">Cost £/month (<span id="costVal">175</span>)</label>
+        <div class="box">
+          <label for="cost">Cost / month £ (<span id="costVal">175</span>)</label>
           <input type="range" id="cost" min="0" max="300" step="1" value="175">
         </div>
-        <div class="input-box">
-          <label for="eff">Efficacy (<span id="effVal">5.5</span>) kg/m²</label>
+        <div class="box">
+          <label for="eff">Efficacy kg/m² (<span id="effVal">5.5</span>)</label>
           <input type="range" id="eff" min="0" max="10" step="0.1" value="5.5">
         </div>
 
-        <div class="input-box">
-          <label>Side Effects</label>
+        <!-- Radios ------------------------------------------------->
+        <div class="box">
+          <label>Side-effects</label>
           <div class="radio-group">
             <label><input type="radio" name="side" value="0" checked>None</label>
             <label><input type="radio" name="side" value="1">Mild</label>
             <label><input type="radio" name="side" value="2">Moderate</label>
           </div>
         </div>
-        <div class="input-box">
+        <div class="box">
           <label>Frequency</label>
           <div class="radio-group">
             <label><input type="radio" name="freq" value="weekly" checked>Weekly</label>
             <label><input type="radio" name="freq" value="monthly">Monthly</label>
           </div>
         </div>
-        <div class="input-box">
+        <div class="box">
           <label>Method</label>
           <div class="radio-group">
             <label><input type="radio" name="method" value="injection" checked>Injection</label>
             <label><input type="radio" name="method" value="lifestyle">Lifestyle</label>
           </div>
         </div>
-        <div class="input-box">
-          <label>Duration</label>
+        <div class="box">
+          <label>Duration (months)</label>
           <div class="radio-group">
-            <label><input type="radio" name="dur" value="6">6 mo</label>
-            <label><input type="radio" name="dur" value="12" checked>12 mo</label>
+            <label><input type="radio" name="dur" value="6">6</label>
+            <label><input type="radio" name="dur" value="12" checked>12</label>
           </div>
         </div>
-        <div class="input-box">
+        <div class="box">
           <label>Programme Type</label>
           <div class="radio-group">
             <label><input type="radio" name="prog" value="combined" checked>Combined</label>
@@ -148,50 +143,48 @@
           </div>
         </div>
 
-        <!-- full-width buttons -->
-        <div class="button-group full-span">
-          <button id="calcBtn">Calculate</button>
-          <button id="simBtn">Simulate Uncertainty</button>
+        <!-- Buttons & warnings ------------------------------------>
+        <div class="full-span btn-row">
+          <button id="calcBtn" class="primary">Calculate</button>
+          <button id="simBtn"  class="secondary">Simulate Uncertainty</button>
         </div>
-
-        <!-- inline warnings -->
-        <div id="warningMsg" class="warning full-span"></div>
+        <div id="warn" class="full-span warn"></div>
       </form>
 
-      <!-- POP-UP -->
-      <div id="resultsPopup" class="popup">
-        <div class="popup-content">
-          <span class="close-popup">×</span>
+      <!-- Modal results ------------------------------------------>
+      <div id="popup" class="modal">
+        <div class="modal-content">
+          <span class="close">×</span>
           <div id="popupBody"></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- UPTAKE -->
-  <section id="uptakeTab" class="tab-content">
+  <!-- ── Uptake ───────────────────────────────────────────────── -->
+  <section id="uptake" class="tab-content">
     <h2>Predicted Uptake</h2>
-    <div id="upText"></div>
+    <div class="card" id="upText"></div>
     <canvas id="upChart"></canvas>
   </section>
 
-  <!-- COST-BENEFIT -->
-  <section id="cbaTab" class="tab-content">
+  <!-- ── Cost-Benefit ─────────────────────────────────────────── -->
+  <section id="cba" class="tab-content">
     <h2>Cost-Benefit Analysis</h2>
     <div id="cbTable"></div>
     <canvas id="cbChart"></canvas>
-    <canvas id="simChart"></canvas>
+    <canvas id="simChart" style="display:none"></canvas>
   </section>
 
-  <!-- SCENARIOS -->
-  <section id="scenariosTab" class="tab-content">
+  <!-- ── Scenarios ────────────────────────────────────────────── -->
+  <section id="scenarios" class="tab-content">
     <h2>Saved Scenarios</h2>
     <ul id="scList"></ul>
-    <div class="button-group">
-      <button id="saveBtn">Save Current Scenario</button>
-      <button id="pdfBtn">Generate PDF Report</button>
+    <div class="btn-row">
+      <button id="saveBtn" class="primary">Save Current Scenario</button>
+      <button id="pdfBtn"  class="secondary">Export PDF</button>
     </div>
   </section>
-</div>
+</main>
 </body>
 </html>
