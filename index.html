@@ -23,60 +23,60 @@
         
         <div id="introduction" class="tab-content active">
             <h2>Introduction</h2>
-            <p>This tool helps patients, clinicians, and policymakers evaluate weight loss strategies for obese individuals (BMI 27-35 kg/m²) with prostate cancer before robotic-assisted radical prostatectomy. It uses patient preferences from studies to predict program uptake and assesses cost-effectiveness to reduce risks like incontinence.</p>
-            <p><strong>Educational Note:</strong> Weight loss can lower surgery complications (e.g., 20% less incontinence risk). Semaglutide (Wegovy) achieves ~5.54 kg/m² BMI reduction over 12 months but may cause nausea. Lifestyle changes (diet/exercise via NHS app) are safer but slower. Use tabs to input data, view predictions, and compare costs/benefits.</p>
+            <p>This tool assists patients, clinicians, and policymakers in evaluating weight loss strategies for obese individuals (BMI 27-35 kg/m²) with prostate cancer before robotic-assisted radical prostatectomy. It uses patient preferences from research to predict program uptake and assesses cost-effectiveness to reduce risks like incontinence.</p>
+            <p>Weight loss can lower surgery complications (e.g., 20% less incontinence risk). Semaglutide (Wegovy) achieves ~5.54 kg/m² BMI reduction over 12 months but may cause nausea. Lifestyle changes (diet/exercise via NHS app) are safer but slower. Use tabs to input data, view predictions, and compare costs/benefits.</p>
         </div>
         
         <div id="attributes" class="tab-content">
             <h2>Attributes & Levels</h2>
-            <p><strong>Note:</strong> These are key features of weight loss programs based on clinical research. Each has specific options (levels) to tailor your choice.</p>
+            <p>These are key features of weight loss programs based on clinical research. Each has specific options (levels) to tailor your choice.</p>
             <div class="attribute-list">
-                <div class="attribute-item">
-                    <strong>BMI</strong>: Starting Body Mass Index<br>
+                <div class="attribute-box">
+                    <strong>BMI</strong><span class="tooltip" data-tooltip="Measures obesity; higher BMI increases risks like incontinence. Tool ensures trial eligibility.">?</span><br>
                     <strong>Levels</strong>: 27-35 kg/m²<br>
-                    <strong>Description</strong>: Measures obesity; higher BMI increases risks like incontinence and complications. Tool ensures trial eligibility.
+                    <strong>Description</strong>: Your starting Body Mass Index, critical for assessing surgery risks.
                 </div>
-                <div class="attribute-item">
-                    <strong>Cost per Month (£)</strong>: Monthly expense<br>
+                <div class="attribute-box">
+                    <strong>Cost per Month (£)</strong><span class="tooltip" data-tooltip="Covers drug (Semaglutide £73-£175 per NHS/BNF) or lifestyle program fees.">?</span><br>
                     <strong>Levels</strong>: £0-300<br>
-                    <strong>Description</strong>: Covers drug (e.g., Semaglutide £73 starter to £175 maintenance per NHS/BNF) or lifestyle program fees.
+                    <strong>Description</strong>: Monthly expense of the program, including medication or support costs.
                 </div>
-                <div class="attribute-item">
-                    <strong>Efficacy (BMI Reduction)</strong>: Expected BMI drop<br>
+                <div class="attribute-box">
+                    <strong>Efficacy (BMI Reduction)</strong><span class="tooltip" data-tooltip="From STEP-1 trial; 5.54 kg/m² with Semaglutide reduces incontinence risk by ~20%.">?</span><br>
                     <strong>Levels</strong>: 0-10 kg/m²<br>
-                    <strong>Description</strong>: From STEP-1 trial; 5.54 kg/m² with Semaglutide reduces incontinence risk by ~20%.
+                    <strong>Description</strong>: Expected BMI decrease, impacting surgical outcomes.
                 </div>
-                <div class="attribute-item">
-                    <strong>Side Effects</strong>: Severity<br>
-                    <strong>Levels</strong>: None (lifestyle), Mild (nausea), Moderate (GI issues)<br>
-                    <strong>Description</strong>: Injections may cause side effects; lifestyle programs typically have none.
+                <div class="attribute-box">
+                    <strong>Side Effects</strong><span class="tooltip" data-tooltip="Injections may cause nausea or GI issues; lifestyle programs typically have none.">?</span><br>
+                    <strong>Levels</strong>: None, Mild, Moderate<br>
+                    <strong>Description</strong>: Severity of potential side effects from the intervention.
                 </div>
-                <div class="attribute-item">
-                    <strong>Frequency</strong>: Administration schedule<br>
-                    <strong>Levels</strong>: Weekly (injections), Monthly (check-ins)<br>
-                    <strong>Description</strong>: Weekly for Semaglutide; monthly for lifestyle monitoring via NHS app.
+                <div class="attribute-box">
+                    <strong>Frequency</strong><span class="tooltip" data-tooltip="Weekly for Semaglutide injections; monthly for lifestyle check-ins via NHS app.">?</span><br>
+                    <strong>Levels</strong>: Weekly, Monthly<br>
+                    <strong>Description</strong>: How often the intervention is administered or monitored.
                 </div>
-                <div class="attribute-item">
-                    <strong>Method</strong>: Delivery approach<br>
-                    <strong>Levels</strong>: Injection (Semaglutide), Lifestyle (diet/exercise)<br>
-                    <strong>Description</strong>: Injection is medical; lifestyle uses NHS Weight Loss Plan app.
+                <div class="attribute-box">
+                    <strong>Method</strong><span class="tooltip" data-tooltip="Injection is medical (Semaglutide); lifestyle uses diet/exercise with NHS app.">?</span><br>
+                    <strong>Levels</strong>: Injection, Lifestyle<br>
+                    <strong>Description</strong>: Delivery approach of the weight loss program.
                 </div>
-                <div class="attribute-item">
-                    <strong>Duration (months)</strong>: Program length<br>
+                <div class="attribute-box">
+                    <strong>Duration (months)</strong><span class="tooltip" data-tooltip="Covers pre/post-surgery; 12 months may improve continence recovery.">?</span><br>
                     <strong>Levels</strong>: 6, 12<br>
-                    <strong>Description</strong>: Covers pre/post-surgery; 12 months may improve continence recovery.
+                    <strong>Description</strong>: Length of the program, affecting outcomes and costs.
                 </div>
-                <div class="attribute-item">
-                    <strong>Programme Type</strong>: Program structure<br>
-                    <strong>Levels</strong>: Combined (drug + lifestyle), Lifestyle Alone<br>
-                    <strong>Description</strong>: Combined is more effective but costlier; lifestyle alone is safer and cheaper.
+                <div class="attribute-box">
+                    <strong>Programme Type</strong><span class="tooltip" data-tooltip="Combined is more effective but costlier; lifestyle alone is safer and cheaper.">?</span><br>
+                    <strong>Levels</strong>: Combined, Lifestyle Alone<br>
+                    <strong>Description</strong>: Structure of the program, combining drug and lifestyle or lifestyle only.
                 </div>
             </div>
         </div>
         
         <div id="inputs" class="tab-content">
             <h2>Inputs</h2>
-            <p><strong>Note:</strong> Adjust sliders or select options to customize your program. Recommendations update instantly.</p>
+            <p>Adjust sliders or select options to customize your program. Results and recommendations appear in a popup after calculation.</p>
             <form id="inputForm">
                 <div class="input-box">
                     <label>BMI (27-35 kg/m²):</label>
@@ -134,27 +134,34 @@
                 <button id="calculateBtn">Calculate</button>
                 <button id="simulateBtn">Simulate Uncertainty</button>
             </div>
-            <div id="recommendations" class="recommendations"></div>
+            <div id="resultsPopup" class="popup">
+                <div class="popup-content">
+                    <span class="close-popup">&times;</span>
+                    <h3>Calculation Results</h3>
+                    <div id="popupResults"></div>
+                    <div id="recommendations"></div>
+                </div>
+            </div>
         </div>
         
         <div id="uptake" class="tab-content">
             <h2>Predicted Uptake</h2>
-            <p><strong>Note:</strong> Shows the percentage of patients likely to choose this program based on preferences from research studies. Higher uptake means more patients will follow through.</p>
+            <p>Shows the percentage of patients likely to choose this program based on research preferences. Higher uptake means more patients will follow through.</p>
             <div id="uptakeResults"></div>
-            <canvas id="uptakeChart" width="400" height="200"></canvas>
+            <canvas id="uptakeChart"></canvas>
         </div>
         
         <div id="cost-benefit" class="tab-content">
             <h2>Cost-Benefit Analysis</h2>
-            <p><strong>Note:</strong> Compares costs (drugs, monitoring, admin) to benefits (savings from fewer complications, quality-of-life gains). Benefits are scaled by uptake: e.g., 70% uptake means 70% of potential savings/QALYs. Costs use NHS pricing (e.g., Semaglutide £175/month); benefits use £460 savings per 5 kg/m² BMI reduction (from reduced complications like incontinence) and QALYs valued at £20,000 each.</p>
+            <p>Compares costs (drugs, monitoring, admin, training) to benefits (savings from fewer complications, quality-of-life gains). Benefits are scaled by uptake: e.g., 70% uptake means 70% of savings and QALYs. Costs use NHS pricing (Semaglutide £175/month); savings use £92 per 1 kg/m² BMI reduction; QALYs valued at £20,000.</p>
             <div id="cbaResults"></div>
-            <canvas id="cbaChart" width="400" height="200"></canvas>
-            <canvas id="simChart" width="400" height="200"></canvas>
+            <canvas id="cbaChart"></canvas>
+            <canvas id="simChart"></canvas>
         </div>
         
         <div id="scenarios" class="tab-content">
             <h2>Saved Scenarios</h2>
-            <p><strong>Note:</strong> Save and compare multiple scenarios to find the best program for you or your patients.</p>
+            <p>Save and compare multiple scenarios to find the best program for you or your patients.</p>
             <ul id="scenarioList"></ul>
             <div class="button-group">
                 <button id="saveScenarioBtn">Save Current Scenario</button>
